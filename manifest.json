@@ -6,16 +6,29 @@
   "scope": "/CPEM-99/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#8D4925",
-  "background_color": "#8D4925",
+  "theme_color": "#3B1F14",
+  "background_color": "#3B1F14",
   "lang": "es-AR",
   "categories": ["education"],
   "icons": [
     {
-      "src": "cpem99.png",
-      "sizes": "1024x1024",
+      "src": "icon-192.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/screenshot.png",
+      "sizes": "390x844",
+      "type": "image/png"
     }
   ],
   "prefer_related_applications": false
