@@ -1,4 +1,4 @@
-# CPEM N° 101 — Paso Aguerre · PWA Intercultural
+# CPEM N° 99 — Paso Aguerre · PWA Intercultural
 
 Aplicación educativa intercultural para estudiantes de comunidades mapuches.
 Funciona **completamente sin internet** una vez instalada.
@@ -27,8 +27,8 @@ cpem101-pwa/
 ### 1. Crear cuenta en GitHub
 - Entrá a https://github.com
 - Hacé clic en **Sign up**
-- Usá un correo del colegio, ej: `cpem101pague@gmail.com`
-- Elegí un nombre de usuario, ej: `cpem101-pague`
+- Usá un correo del colegio, ej: `cpem99pague@gmail.com`
+- Elegí un nombre de usuario, ej: `cpem99-pague`
 
 ### 2. Crear el repositorio
 - Hacé clic en el botón verde **New** (o el ícono +)
@@ -53,7 +53,7 @@ cpem101-pwa/
 
 ### 5. La URL de la app
 ```
-https://cpem101-pague.github.io/app
+https://cpem99-pague.github.io/app
 ```
 Compartís esa URL con los estudiantes por WhatsApp.
 En Android, Chrome les va a ofrecer "Agregar a pantalla de inicio" → queda como app.
