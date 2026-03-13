@@ -1,0 +1,35 @@
+{
+  "name": "CPEM N° 101 — Paso Aguerre",
+  "short_name": "CPEM 101",
+  "description": "Aplicación educativa intercultural del CPEM N° 101 de Paso Aguerre, Neuquén. Contenido disponible sin conexión a internet.",
+  "start_url": "/CPEM-101/",
+  "scope": "/CPEM-101/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#3B1F14",
+  "background_color": "#3B1F14",
+  "lang": "es-AR",
+  "categories": ["education"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/screenshot.png",
+      "sizes": "390x844",
+      "type": "image/png"
+    }
+  ],
+  "prefer_related_applications": false
+}
