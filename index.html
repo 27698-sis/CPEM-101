@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <title>CPEM N° 101 — Paso Aguerre</title>
+  <title>CPEM N° 99 — Paso Aguerre</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -20,7 +20,7 @@
       --earth:      #3B1F14;
       --earth-mid:  #5C2E1A;
       --terracota:  #A04530;
-      --ocre:       #C4883B;
+      --ocre:        #C4883B;
       --ocre-light: #E8BA75;
       --turquoise:  #2E8080;
       --turq-light: #5FAEAE;
@@ -72,7 +72,7 @@
     }
 
     /* ══════════════════════════════════════
-       SPLASH SCREEN
+        SPLASH SCREEN
     ══════════════════════════════════════ */
     #splash {
       background: linear-gradient(170deg, #3B1F14 0%, #5C2E1A 45%, #2E4040 100%);
@@ -84,7 +84,6 @@
       text-align: center;
     }
 
-    /* Decorative Mapuche star top */
     .splash-star {
       margin-bottom: 28px;
       animation: star-spin 24s linear infinite;
@@ -153,7 +152,6 @@
       animation: fade-up 0.8s ease 0.7s forwards;
     }
 
-    /* Quote */
     .splash-quote-wrap {
       position: relative;
       max-width: 300px;
@@ -186,7 +184,6 @@
       border-radius: 2px;
     }
 
-    /* Loader bar */
     .splash-loader {
       position: absolute;
       bottom: 0;
@@ -211,7 +208,7 @@
 
 
     /* ══════════════════════════════════════
-       HOME SCREEN
+        HOME SCREEN
     ══════════════════════════════════════ */
     #home {
       background: #F2EBD9;
@@ -222,7 +219,6 @@
     }
     #home::-webkit-scrollbar { display: none; }
 
-    /* Header */
     .home-header {
       background: linear-gradient(155deg, #3B1F14 0%, #5C2E1A 55%, #2E4040 100%);
       padding: 52px 24px 24px;
@@ -285,7 +281,6 @@
       display: block;
     }
 
-    /* Header notification bell */
     .header-bell {
       width: 38px;
       height: 38px;
@@ -309,7 +304,6 @@
       border: 1.5px solid #3B1F14;
     }
 
-    /* Greeting */
     .header-greeting {
       background: rgba(255,255,255,0.07);
       border-radius: 12px;
@@ -330,13 +324,11 @@
       letter-spacing: 0.5px;
     }
 
-    /* Body content */
     .home-body {
       padding: 22px 18px 90px;
       flex: 1;
     }
 
-    /* Section title */
     .section-label {
       font-family: 'Nunito', sans-serif;
       font-size: 11px;
@@ -356,7 +348,6 @@
       background: linear-gradient(90deg, rgba(160,69,48,0.3), transparent);
     }
 
-    /* Banner card */
     .banner-card {
       background: linear-gradient(135deg, var(--turquoise) 0%, #1E5E5E 100%);
       border-radius: 16px;
@@ -408,7 +399,6 @@
       letter-spacing: 0.3px;
     }
 
-    /* Module grid */
     .modules-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -478,7 +468,6 @@
       border-radius: 10px;
     }
 
-    /* Recent activity row */
     .activity-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
     .activity-item {
       background: #fff;
@@ -517,7 +506,6 @@
     .activity-sub { font-size: 11px; color: #9A8070; margin-top: 2px; }
     .activity-arrow { color: #C4A882; font-size: 16px; flex-shrink: 0; }
 
-    /* Bottom nav */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -555,7 +543,6 @@
     }
     .nav-item.active .nav-label { color: var(--terracota); }
 
-    /* Offline badge */
     .offline-badge {
       display: inline-flex;
       align-items: center;
@@ -585,23 +572,15 @@
 <body>
 <div class="app-frame">
 
-  <!-- ════════════════════════════════
-       SPLASH SCREEN
-  ═══════════════════════════════════ -->
   <div class="screen" id="splash">
 
-    <!-- Mapuche geometric pattern background -->
     <svg class="geo-pattern" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <pattern id="geo" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-          <!-- Diamond -->
           <polygon points="30,2 58,30 30,58 2,30" fill="none" stroke="#F5EFE0" stroke-width="0.8"/>
-          <!-- Inner diamond -->
           <polygon points="30,12 48,30 30,48 12,30" fill="none" stroke="#C4883B" stroke-width="0.6"/>
-          <!-- Center cross -->
           <line x1="30" y1="16" x2="30" y2="44" stroke="#F5EFE0" stroke-width="0.4"/>
           <line x1="16" y1="30" x2="44" y2="30" stroke="#F5EFE0" stroke-width="0.4"/>
-          <!-- Corner dots -->
           <circle cx="30" cy="2"  r="1.5" fill="#C4883B"/>
           <circle cx="58" cy="30" r="1.5" fill="#C4883B"/>
           <circle cx="30" cy="58" r="1.5" fill="#C4883B"/>
@@ -611,7 +590,6 @@
       <rect width="100%" height="100%" fill="url(#geo)"/>
     </svg>
 
-    <!-- Rotating Guñelve (Mapuche 8-pointed star) -->
     <div class="splash-star">
       <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M28 2 L31 22 L48 8 L34 25 L54 28 L34 31 L48 48 L31 34 L28 54 L25 34 L8 48 L22 31 L2 28 L22 25 L8 8 L25 22 Z"
@@ -621,36 +599,28 @@
       </svg>
     </div>
 
-    <!-- Shield / Logo -->
     <div class="splash-shield">
       <div class="shield-inner">
-        101
+        99
         <span>CPEM</span>
       </div>
     </div>
 
-    <!-- Institution name -->
-    <div class="splash-institution">CPEM N° 101</div>
+    <div class="splash-institution">CPEM N° 99</div>
     <div class="splash-location">Paso Aguerre · Neuquén</div>
 
-    <!-- Quote -->
     <div class="splash-quote-wrap">
       <span class="splash-quote-mark">"</span>
       <p class="splash-quote">El respeto por la cultura es la verdadera educación y camino</p>
       <span class="splash-quote-line"></span>
     </div>
 
-    <!-- Progress loader -->
     <div class="splash-loader"></div>
   </div>
 
 
-  <!-- ════════════════════════════════
-       HOME SCREEN
-  ═══════════════════════════════════ -->
   <div class="screen hidden" id="home">
 
-    <!-- ─── Header ─── -->
     <div class="home-header">
       <svg class="home-header geo-bg" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:.06;pointer-events:none;">
         <defs>
@@ -665,7 +635,6 @@
       <div class="header-top">
         <div class="header-logo-wrap">
           <div class="header-logo-circle">
-            <!-- Mini Guñelve -->
             <svg width="28" height="28" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M28 4 L30.5 20 L44 12 L36 24 L52 28 L36 32 L44 44 L30.5 36 L28 52 L25.5 36 L12 44 L20 32 L4 28 L20 24 L12 12 L25.5 20 Z"
                     fill="none" stroke="#C4883B" stroke-width="1.5" stroke-linejoin="round"/>
@@ -674,7 +643,7 @@
           </div>
           <div class="header-title-block">
             <span class="header-cpem">CPEM N°</span>
-            <span class="header-name">101 — Paso Aguerre</span>
+            <span class="header-name">99 — Paso Aguerre</span>
             <span class="header-location">Paso Aguerre · Neuquén</span>
           </div>
         </div>
@@ -686,23 +655,19 @@
         </div>
       </div>
 
-      <!-- Greeting -->
       <div class="header-greeting">
         <div class="greeting-line1">Mari mari — buenos días, peñi / lamgen</div>
         <div class="greeting-line2">¿Qué vas a aprender hoy?</div>
       </div>
     </div>
 
-    <!-- ─── Body ─── -->
     <div class="home-body">
 
-      <!-- Offline indicator -->
       <div class="offline-badge">
         <span class="offline-dot"></span>
         Disponible sin internet
       </div>
 
-      <!-- Banner -->
       <div class="section-label">Destacado</div>
       <div class="banner-card">
         <svg class="banner-card-bg" width="130" height="130" viewBox="0 0 56 56" fill="none">
@@ -718,7 +683,6 @@
         </div>
       </div>
 
-      <!-- Modules -->
       <div class="section-label">Módulos</div>
       <div class="modules-grid">
         <div class="module-card mc-red">
@@ -763,7 +727,6 @@
         </div>
       </div>
 
-      <!-- Recent -->
       <div class="section-label">Reciente</div>
       <div class="activity-list">
         <div class="activity-item">
@@ -800,9 +763,8 @@
         </div>
       </div>
 
-    </div><!-- end home-body -->
+    </div>
 
-    <!-- ─── Bottom Nav ─── -->
     <div class="bottom-nav">
       <div class="nav-item active">
         <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A04530" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
@@ -822,11 +784,10 @@
       </div>
     </div>
 
-  </div><!-- end home screen -->
-</div><!-- end app-frame -->
+  </div>
+</div>
 
 <script>
-  // Auto-transition splash → home after 3.6s
   setTimeout(() => {
     const splash = document.getElementById('splash');
     const home   = document.getElementById('home');
@@ -834,13 +795,11 @@
     home.classList.remove('hidden');
   }, 3600);
 
-  // Tap splash to skip
   document.getElementById('splash').addEventListener('click', () => {
     document.getElementById('splash').classList.add('hidden');
     document.getElementById('home').classList.remove('hidden');
   });
 
-  // Bottom nav tab switching
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -848,35 +807,30 @@
     });
   });
 </script>
-</body>
-</html>
 
 <script>
-  // Registro del Service Worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
       try {
-        const reg = await navigator.serviceWorker.register('/sw.js', { scope: '/CPEM-101/' });
-        console.log('[PWA] Service Worker registrado:', reg.scope);
+        // CORRECCIÓN CLAVE: El scope ahora es CPEM-99
+        const reg = await navigator.serviceWorker.register('/sw.js', { scope: '/CPEM-99/' });
+        console.log('[PWA] Service Worker registrado en CPEM-99:', reg.scope);
 
-        // Registrar Periodic Background Sync si está disponible (Android/Chrome)
         if ('periodicSync' in reg) {
           try {
             await reg.periodicSync.register('periodic-content-update', {
-              minInterval: 24 * 60 * 60 * 1000 // cada 24 horas
+              minInterval: 24 * 60 * 60 * 1000 
             });
-            console.log('[PWA] Periodic sync registrado');
           } catch (e) {
-            console.log('[PWA] Periodic sync no disponible en este dispositivo');
+            console.log('[PWA] Periodic sync no disponible');
           }
         }
 
-        // Escuchar actualizaciones disponibles
         reg.addEventListener('updatefound', () => {
           const newWorker = reg.installing;
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('[PWA] Nueva versión disponible — se aplicará al reabrir');
+              console.log('[PWA] Nueva versión disponible');
             }
           });
         });
@@ -887,12 +841,11 @@
     });
   }
 
-  // Capturar evento de instalación para Android
   let deferredPrompt;
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
-    // Podés mostrar un botón "Instalar app" si querés
-    console.log('[PWA] App lista para instalar');
   });
 </script>
+</body>
+</html>
