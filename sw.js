@@ -1,12 +1,13 @@
 // ─────────────────────────────────────────────
 //  CPEM N° 99 — Service Worker
 //  Estrategia: Cache First + Background Update
-//  Cada vez que hay señal, actualiza silencioso
+//  Paso 3: Gestión inteligente de almacenamiento
 // ─────────────────────────────────────────────
 
 const APP_VERSION   = 'v1.1.0';
 const CACHE_SHELL   = `cpem99-shell-${APP_VERSION}`;
 const CACHE_CONTENT = `cpem99-content-${APP_VERSION}`;
+const MAX_CACHE_MB  = 150; // Límite máximo en MB para contenido educativo
 
 // Archivos del shell — se cachean en la instalación y nunca expiran
 const SHELL_FILES = [
@@ -27,39 +28,87 @@ const CONTENT_PREFETCH = [
   '/contenido/territorio-comunidades.json'
 ];
 
-// ─── DETECCIÓN DE CONECTIVIDAD ─────────────────
-// Para zonas rurales: proteger datos móviles preciosos
+// ─── DETECCIÓN DE CONECTIVIDAD (Paso 1) ─────────────────
 function esConexionEconomica() {
   const conn = navigator.connection;
-  
-  // Si el navegador no soporta Network Information API, asumimos que SÍ podemos sincronizar
   if (!conn) return true;
-  
-  // Si el usuario activó "Ahorro de datos" en Android Chrome → NO sincronizar
   if (conn.saveData) return false;
-  
-  // Si es 2G o conexión lenta → NO sincronizar automáticamente
   if (conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g') return false;
-  
-  // Si es WiFi o 4G/5G → SÍ podemos sincronizar
   return true;
 }
 
+// ─── GESTIÓN DE ALMACENAMIENTO (Paso 3) ─────────────────
+async function getCacheSize() {
+  const cache = await caches.open(CACHE_CONTENT);
+  const keys = await cache.keys();
+  let totalBytes = 0;
+  
+  for (const request of keys) {
+    const response = await cache.match(request);
+    if (response) {
+      const blob = await response.blob();
+      totalBytes += blob.size;
+    }
+  }
+  
+  return {
+    bytes: totalBytes,
+    mb: (totalBytes / (1024 * 1024)).toFixed(1),
+    archivos: keys.length
+  };
+}
+
+async function limpiarCacheViejo(espacioNecesarioMB = 20) {
+  const cache = await caches.open(CACHE_CONTENT);
+  const keys = await cache.keys();
+  
+  if (keys.length === 0) return;
+  
+  // Obtener metadata de último acceso (simulado con timestamp actual si no existe)
+  const archivosConFecha = [];
+  for (const request of keys) {
+    const response = await cache.match(request);
+    // Usar header Date o asumir que los más viejos son los primeros en el caché
+    const fecha = response.headers.get('date') 
+      ? new Date(response.headers.get('date')).getTime() 
+      : Date.now() - (keys.indexOf(request) * 86400000); // Fallback: asumir orden de ingreso
+    
+    archivosConFecha.push({ request, fecha, cache });
+  }
+  
+  // Ordenar por fecha (más viejos primero)
+  archivosConFecha.sort((a, b) => a.fecha - b.fecha);
+  
+  let liberadoMB = 0;
+  const maxLiberar = archivosConFecha.length > 5 ? 5 : archivosConFecha.length; // Borrar máximo 5 archivos por vez
+  
+  for (let i = 0; i < maxLiberar && liberadoMB < espacioNecesarioMB; i++) {
+    const item = archivosConFecha[i];
+    const response = await cache.match(item.request);
+    if (response) {
+      const blob = await response.blob();
+      const mb = blob.size / (1024 * 1024);
+      await cache.delete(item.request);
+      liberadoMB += mb;
+      console.log(`[SW] Eliminado archivo viejo: ${item.request.url} (${mb.toFixed(1)} MB)`);
+    }
+  }
+  
+  return liberadoMB;
+}
+
 // ─── INSTALACIÓN ───────────────────────────────
-// Cachea el shell completo al instalar la PWA
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_SHELL).then(cache => {
       return cache.addAll(SHELL_FILES);
     }).then(() => {
-      // Activa este SW inmediatamente sin esperar
       return self.skipWaiting();
     })
   );
 });
 
 // ─── ACTIVACIÓN ────────────────────────────────
-// Elimina cachés viejos de versiones anteriores
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => {
@@ -72,41 +121,30 @@ self.addEventListener('activate', event => {
           })
       );
     }).then(() => {
-      // Toma control de todas las pestañas abiertas
       return self.clients.claim();
     })
   );
 });
 
 // ─── ESTRATEGIA DE FETCH ────────────────────────
-// Para el shell:    Cache First (instantáneo offline)
-// Para contenido:  Stale-While-Revalidate (sirve del caché, actualiza en fondo)
-// Para otros:      Network First con fallback
-
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
-
-  // Solo interceptar requests del mismo dominio
   if (url.origin !== self.location.origin) return;
 
-  // Shell files → Cache First estricto
   if (isShellFile(url.pathname)) {
     event.respondWith(cacheFirst(event.request));
     return;
   }
 
-  // Archivos de contenido JSON/multimedia → Stale While Revalidate
   if (url.pathname.startsWith('/contenido/') || url.pathname.startsWith('/media/')) {
     event.respondWith(staleWhileRevalidate(event.request));
     return;
   }
 
-  // Todo lo demás → Network First con fallback al caché
   event.respondWith(networkFirstWithFallback(event.request));
 });
 
 // ─── BACKGROUND SYNC ───────────────────────────
-// Se activa cuando el dispositivo recupera conexión
 self.addEventListener('sync', event => {
   if (event.tag === 'sync-content') {
     event.waitUntil(syncNewContent());
@@ -114,7 +152,6 @@ self.addEventListener('sync', event => {
 });
 
 // ─── PERIODIC BACKGROUND SYNC ──────────────────
-// En Android/Chrome: sincroniza cada 24 horas aunque la app esté cerrada
 self.addEventListener('periodicsync', event => {
   if (event.tag === 'periodic-content-update') {
     event.waitUntil(syncNewContent());
@@ -122,7 +159,6 @@ self.addEventListener('periodicsync', event => {
 });
 
 // ─── NOTIFICACIONES PUSH ───────────────────────
-// Para cuando el profe quiera avisar "hay nuevo contenido"
 self.addEventListener('push', event => {
   const data = event.data ? event.data.json() : {};
   const title   = data.title   || 'CPEM N° 99 — Nuevo contenido';
@@ -144,17 +180,30 @@ self.addEventListener('notificationclick', event => {
   );
 });
 
-// ─── MENSAJES DESDE LA APP ─────────────────────
-// Paso 2: Permite al usuario forzar actualización manual (ignora restricciones de datos)
+// ─── MENSAJES DESDE LA APP (Paso 2 + 3) ─────────────────────
 self.addEventListener('message', event => {
+  // Paso 2: Forzar sincronización
   if (event.data && event.data.type === 'FORCE_SYNC') {
     event.waitUntil(
       syncNewContent(true).then(() => {
-        // Avisar a la pestaña que terminó exitosamente
         event.source.postMessage({ type: 'SYNC_COMPLETE', success: true });
       }).catch(error => {
-        // Avisar a la pestaña que hubo error
         event.source.postMessage({ type: 'SYNC_ERROR', error: error.message });
+      })
+    );
+  }
+  
+  // Paso 3: Reportar estado de almacenamiento
+  if (event.data && event.data.type === 'GET_STORAGE_STATUS') {
+    event.waitUntil(
+      getCacheSize().then(stats => {
+        event.source.postMessage({ 
+          type: 'STORAGE_STATUS', 
+          usadoMB: stats.mb,
+          archivos: stats.archivos,
+          maximoMB: MAX_CACHE_MB,
+          porcentaje: Math.round((parseFloat(stats.mb) / MAX_CACHE_MB) * 100)
+        });
       })
     );
   }
@@ -164,7 +213,6 @@ self.addEventListener('message', event => {
 //  FUNCIONES DE CACHÉ
 // ════════════════════════════════════════════════
 
-// Cache First: sirve del caché, si no existe va a la red
 async function cacheFirst(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
@@ -176,12 +224,10 @@ async function cacheFirst(request) {
     }
     return response;
   } catch {
-    // Sin red y sin caché: página de error offline
     return offlineFallback(request);
   }
 }
 
-// Stale While Revalidate: sirve del caché inmediatamente, actualiza en fondo
 async function staleWhileRevalidate(request) {
   const cached = await caches.match(request);
   const networkPromise = fetch(request).then(async response => {
@@ -195,7 +241,6 @@ async function staleWhileRevalidate(request) {
   return cached || await networkPromise || offlineFallback(request);
 }
 
-// Network First: intenta la red, si falla usa caché
 async function networkFirstWithFallback(request) {
   try {
     const response = await fetch(request);
@@ -210,13 +255,23 @@ async function networkFirstWithFallback(request) {
   }
 }
 
-// Sincroniza contenido nuevo del servidor en background
-// Paso 2: Ahora acepta parámetro 'force' para ignorar protección de datos
+// Sincroniza contenido con gestión de espacio (Paso 3)
 async function syncNewContent(force = false) {
-  // Si no es forzado, verificar protección de datos (Paso 1)
+  // Paso 1: Verificar si debemos sincronizar
   if (!force && !esConexionEconomica()) {
-    console.log('[SW] Sincronización pospuesta: protegiendo datos móviles del usuario');
-    return;
+    console.log('[SW] Sincronización pospuesta: protegiendo datos móviles');
+    return { status: 'pospuesto', razon: 'datos' };
+  }
+  
+  // Paso 3: Verificar espacio disponible antes de descargar
+  const stats = await getCacheSize();
+  if (parseFloat(stats.mb) > MAX_CACHE_MB) {
+    console.log(`[SW] Caché lleno (${stats.mb} MB). Limpiando archivos viejos...`);
+    const liberado = await limpiarCacheViejo(30); // Intentar liberar 30MB
+    if (liberado === 0) {
+      console.warn('[SW] No se pudo liberar espacio. Cancelando sincronización.');
+      return { status: 'error', razon: 'sin_espacio' };
+    }
   }
   
   const cache = await caches.open(CACHE_CONTENT);
@@ -228,15 +283,28 @@ async function syncNewContent(force = false) {
           await cache.put(url, response);
           console.log(`[SW] Contenido actualizado: ${url}`);
         }
-      } catch {
-        // Sin conexión: no pasa nada, se intentará la próxima vez
+      } catch (err) {
+        console.log(`[SW] No se pudo descargar ${url}: ${err.message}`);
       }
     })
   );
+  
+  // Reportar nuevo estado de almacenamiento a todas las pestañas
+  const nuevasStats = await getCacheSize();
+  const clients = await self.clients.matchAll();
+  clients.forEach(client => {
+    client.postMessage({
+      type: 'STORAGE_STATUS',
+      usadoMB: nuevasStats.mb,
+      archivos: nuevasStats.archivos,
+      maximoMB: MAX_CACHE_MB,
+      porcentaje: Math.round((parseFloat(nuevasStats.mb) / MAX_CACHE_MB) * 100)
+    });
+  });
+  
   return updates;
 }
 
-// Determina si un path es parte del shell
 function isShellFile(pathname) {
   return SHELL_FILES.some(file => {
     const normalized = file === '/' ? '/index.html' : file;
@@ -244,7 +312,6 @@ function isShellFile(pathname) {
   });
 }
 
-// Respuesta HTML de fallback cuando todo falla (sin red, sin caché)
 function offlineFallback(request) {
   if (request.headers.get('Accept')?.includes('text/html')) {
     return new Response(`
