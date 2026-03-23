@@ -144,6 +144,22 @@ self.addEventListener('notificationclick', event => {
   );
 });
 
+// ─── MENSAJES DESDE LA APP ─────────────────────
+// Paso 2: Permite al usuario forzar actualización manual (ignora restricciones de datos)
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'FORCE_SYNC') {
+    event.waitUntil(
+      syncNewContent(true).then(() => {
+        // Avisar a la pestaña que terminó exitosamente
+        event.source.postMessage({ type: 'SYNC_COMPLETE', success: true });
+      }).catch(error => {
+        // Avisar a la pestaña que hubo error
+        event.source.postMessage({ type: 'SYNC_ERROR', error: error.message });
+      })
+    );
+  }
+});
+
 // ════════════════════════════════════════════════
 //  FUNCIONES DE CACHÉ
 // ════════════════════════════════════════════════
@@ -195,11 +211,12 @@ async function networkFirstWithFallback(request) {
 }
 
 // Sincroniza contenido nuevo del servidor en background
-async function syncNewContent() {
-  // PASO 1: Verificar si debemos sincronizar (proteger datos móviles)
-  if (!esConexionEconomica()) {
+// Paso 2: Ahora acepta parámetro 'force' para ignorar protección de datos
+async function syncNewContent(force = false) {
+  // Si no es forzado, verificar protección de datos (Paso 1)
+  if (!force && !esConexionEconomica()) {
     console.log('[SW] Sincronización pospuesta: protegiendo datos móviles del usuario');
-    return; // Salimos sin hacer nada, no gastamos sus datos
+    return;
   }
   
   const cache = await caches.open(CACHE_CONTENT);
