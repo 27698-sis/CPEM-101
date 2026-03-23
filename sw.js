@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  CPEM N° 101 — Service Worker
+//  CPEM N° 99 — Service Worker
 //  Estrategia: Cache First + Background Update
 //  Cada vez que hay señal, actualiza silencioso
 // ─────────────────────────────────────────────
@@ -26,6 +26,24 @@ const CONTENT_PREFETCH = [
   '/contenido/cultura-identidad.json',
   '/contenido/territorio-comunidades.json'
 ];
+
+// ─── DETECCIÓN DE CONECTIVIDAD ─────────────────
+// Para zonas rurales: proteger datos móviles preciosos
+function esConexionEconomica() {
+  const conn = navigator.connection;
+  
+  // Si el navegador no soporta Network Information API, asumimos que SÍ podemos sincronizar
+  if (!conn) return true;
+  
+  // Si el usuario activó "Ahorro de datos" en Android Chrome → NO sincronizar
+  if (conn.saveData) return false;
+  
+  // Si es 2G o conexión lenta → NO sincronizar automáticamente
+  if (conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g') return false;
+  
+  // Si es WiFi o 4G/5G → SÍ podemos sincronizar
+  return true;
+}
 
 // ─── INSTALACIÓN ───────────────────────────────
 // Cachea el shell completo al instalar la PWA
@@ -107,7 +125,7 @@ self.addEventListener('periodicsync', event => {
 // Para cuando el profe quiera avisar "hay nuevo contenido"
 self.addEventListener('push', event => {
   const data = event.data ? event.data.json() : {};
-  const title   = data.title   || 'CPEM 101 — Nuevo contenido';
+  const title   = data.title   || 'CPEM N° 99 — Nuevo contenido';
   const options = {
     body:    data.body    || 'Hay nuevo material disponible para descargar.',
     icon:    '/icons/icon-192.png',
@@ -178,6 +196,12 @@ async function networkFirstWithFallback(request) {
 
 // Sincroniza contenido nuevo del servidor en background
 async function syncNewContent() {
+  // PASO 1: Verificar si debemos sincronizar (proteger datos móviles)
+  if (!esConexionEconomica()) {
+    console.log('[SW] Sincronización pospuesta: protegiendo datos móviles del usuario');
+    return; // Salimos sin hacer nada, no gastamos sus datos
+  }
+  
   const cache = await caches.open(CACHE_CONTENT);
   const updates = await Promise.allSettled(
     CONTENT_PREFETCH.map(async url => {
@@ -212,7 +236,7 @@ function offlineFallback(request) {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CPEM 101 — Sin conexión</title>
+        <title>CPEM N° 99 — Sin conexión</title>
         <style>
           body { font-family: sans-serif; display: flex; align-items: center;
                  justify-content: center; min-height: 100vh; margin: 0;
@@ -223,7 +247,7 @@ function offlineFallback(request) {
       </head>
       <body>
         <div>
-          <h1>CPEM N° 101</h1>
+          <h1>CPEM N° 99</h1>
           <p>No hay conexión en este momento.<br>
              Abrí la app cuando tengas señal para cargar el contenido.</p>
         </div>
