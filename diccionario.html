@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#3B1F14" />
+  <title>CPEM N° 99 — Diccionario</title>
+  <link rel="manifest" href="manifest.json" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --earth: #3B1F14; --earth-mid: #5C2E1A; --terracota: #A04530;
+      --ocre: #C4883B; --turquoise: #2E8080; --cream: #F5EFE0;
+      --text-muted: #C4A882;
+    }
+    html, body { height: 100%; background: #F2EBD9; font-family: 'Nunito', sans-serif; overflow: hidden; }
+    .app-frame { position: relative; width: 100%; max-width: 420px; height: 100vh; margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; }
+    
+    .header { background: linear-gradient(155deg, #3B1F14 0%, #5C2E1A 55%, #2E4040 100%); padding: 20px 18px 18px; flex-shrink: 0; }
+    .header-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .back-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(196,136,59,0.3); background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--cream); text-decoration: none; font-size: 20px; }
+    .header-title { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; color: var(--cream); flex: 1; }
+    
+    .search-box { position: relative; }
+    .search-input { width: 100%; padding: 14px 18px 14px 44px; border: 1px solid rgba(196,136,59,0.3); border-radius: 12px; background: rgba(255,255,255,0.1); color: var(--cream); font-family: 'Nunito', sans-serif; font-size: 15px; outline: none; }
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ocre); pointer-events: none; }
+    
+    .content { flex: 1; overflow-y: auto; padding: 20px 18px 100px; }
+    .categories { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+    .cat-btn { 
+      display: flex; flex-direction: column; align-items: center; gap: 8px; 
+      padding: 16px 8px; border: none; border-radius: 14px; 
+      background: #fff; cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(59,31,20,0.08); border: 2px solid transparent;
+    }
+    .cat-btn:active { transform: scale(0.96); }
+    .cat-btn.active { border-color: var(--turquoise); background: rgba(46,128,128,0.08); }
+    .cat-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+    .cat-name { font-size: 12px; font-weight: 700; color: var(--earth); text-align: center; line-height: 1.2; }
+    
+    .section-title { font-family: 'Cinzel', serif; font-size: 14px; color: var(--terracota); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(160,69,48,0.3), transparent); }
+    
+    .word-list { display: flex; flex-direction: column; gap: 12px; }
+    .word-card { 
+      background: #fff; border-radius: 14px; padding: 18px 20px; 
+      box-shadow: 0 2px 8px rgba(59,31,20,0.06); border-left: 4px solid var(--turquoise);
+    }
+    .word-card.ocre { border-left-color: var(--ocre); }
+    .word-card.terracota { border-left-color: var(--terracota); }
+    .word-card.earth { border-left-color: var(--earth-mid); }
+    
+    .word-es { font-size: 13px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 600; }
+    .word-mapu { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; color: var(--earth); margin-bottom: 4px; line-height: 1.2; }
+    .word-pron { font-size: 13px; color: var(--text-muted); font-style: italic; font-family: 'Lora', serif; }
+    
+    .empty-state { text-align: center; padding: 40px 20px; color: #666; font-size: 14px; }
+    
+    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; background: #fff; border-top: 1px solid rgba(160,69,48,0.1); display: flex; align-items: center; justify-content: space-around; padding: 10px 10px 18px; z-index: 100; box-shadow: 0 -4px 20px rgba(59,31,20,0.08); }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px 14px; border-radius: 12px; transition: background 0.15s; text-decoration: none; }
+    .nav-item.active { background: rgba(160,69,48,0.08); }
+    .nav-item.active .nav-icon { opacity: 1; color: var(--terracota); }
+    .nav-item.active .nav-label { color: var(--terracota); }
+    .nav-icon { opacity: 0.45; color: #9A8070; }
+    .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.3px; color: #9A8070; }
+  </style>
+</head>
+<body>
+<div class="app-frame">
+  
+  <div class="header">
+    <div class="header-top">
+      <a href="index.html" class="back-btn">←</a>
+      <div class="header-title">Diccionario</div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </span>
+      <input type="text" class="search-input" id="searchInput" placeholder="Buscar palabra..." autocomplete="off" />
+    </div>
+  </div>
+  
+  <div class="content" id="content">
+    <div class="categories" id="categories">
+      <!-- Categorías se generan acá -->
+    </div>
+    
+    <div class="section-title" id="listTitle">Todas las palabras</div>
+    <div class="word-list" id="wordList">
+      <!-- Palabras se generan acá -->
+    </div>
+  </div>
+  
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      <span class="nav-label">Inicio</span>
+    </a>
+    <div class="nav-item active">
+      <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4 8 4v14M8 21v-5a2 2 0 012-2h4a2 2 0 012 2v5"/></svg>
+      <span class="nav-label">Diccionario</span>
+    </div>
+  </div>
+  
+</div>
+
+<script>
+  let diccionario = { categorias: [] };
+  let categoriaActual = 'todas';
+  
+  const iconos = {
+    saludos: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4883B" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>',
+    familia: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A04530" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',
+    escuela: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E8080" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>',
+    naturaleza: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5C2E1A" stroke-width="1.8"><path d="M8 21h8M12 21v-8m0 0l3-3m-3 3l-3-3m3 3V3"/></svg>'
+  };
+  
+  async function cargarDiccionario() {
+    try {
+      const response = await fetch('contenido/diccionario.json');
+      diccionario = await response.json();
+      renderCategorias();
+      renderPalabras();
+    } catch (e) {
+      document.getElementById('wordList').innerHTML = '<div class="empty-state">Error al cargar el diccionario</div>';
+    }
+  }
+  
+  function renderCategorias() {
+    const container = document.getElementById('categories');
+    let html = `<button class="cat-btn ${categoriaActual === 'todas' ? 'active' : ''}" onclick="filtrarCategoria('todas')">
+      <div class="cat-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3B1F14" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+      <span class="cat-name">Todas</span>
+    </button>`;
+    
+    diccionario.categorias.forEach(cat => {
+      html += `<button class="cat-btn ${categoriaActual === cat.id ? 'active' : ''}" onclick="filtrarCategoria('${cat.id}')">
+        <div class="cat-icon">${iconos[cat.id] || iconos.saludos}</div>
+        <span class="cat-name">${cat.nombre}</span>
+      </button>`;
+    });
+    
+    container.innerHTML = html;
+  }
+  
+  function renderPalabras(busqueda = '') {
+    const container = document.getElementById('wordList');
+    const title = document.getElementById('listTitle');
+    let palabras = [];
+    
+    if (categoriaActual === 'todas') {
+      diccionario.categorias.forEach(cat => {
+        cat.palabras.forEach(p => palabras.push({...p, color: cat.color}));
+      });
+    } else {
+      const cat = diccionario.categorias.find(c => c.id === categoriaActual);
+      if (cat) {
+        palabras = cat.palabras.map(p => ({...p, color: cat.color}));
+        title.textContent = cat.nombre;
+      }
+    }
+    
+    if (busqueda) {
+      const termino = busqueda.toLowerCase();
+      palabras = palabras.filter(p => 
+        p.es.toLowerCase().includes(termino) || 
+        p.mapu.toLowerCase().includes(termino)
+      );
+      title.textContent = busqueda ? `Resultados para "${busqueda}"` : 'Todas las palabras';
+    } else if (categoriaActual === 'todas') {
+      title.textContent = 'Todas las palabras';
+    }
+    
+    if (palabras.length === 0) {
+      container.innerHTML = '<div class="empty-state">No se encontraron palabras</div>';
+      return;
+    }
+    
+    container.innerHTML = palabras.map(p => `
+      <div class="word-card ${p.color}">
+        <div class="word-es">${p.es}</div>
+        <div class="word-mapu">${p.mapu}</div>
+        <div class="word-pron">Se pronuncia: [${p.pron}]</div>
+      </div>
+    `).join('');
+  }
+  
+  function filtrarCategoria(id) {
+    categoriaActual = id;
+    document.getElementById('searchInput').value = '';
+    renderCategorias();
+    renderPalabras();
+  }
+  
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    renderPalabras(e.target.value);
+  });
+  
+  cargarDiccionario();
+  
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+</script>
+</body>
+</html>
