@@ -1,89 +1,91 @@
 // ─────────────────────────────────────────────
 //  CPEM N° 99 — Service Worker
 //  Estrategia: Cache First + Background Update
-//  Paso 3: Gestión inteligente de almacenamiento + Diccionario offline
-//  v1.2.1 — FIX: prefetch de contenido en install + rutas staleWhileRevalidate
+//  v1.2.3 — Footer, Licencia y Rutas Normalizadas
 // ─────────────────────────────────────────────
 
-const APP_VERSION   = 'v1.2.2'; // Actualizado para incluir Footer y Licencia
+const APP_VERSION   = 'v1.2.3'; 
 const CACHE_SHELL   = `cpem99-shell-${APP_VERSION}`;
 const CACHE_CONTENT = `cpem99-content-${APP_VERSION}`;
 const MAX_CACHE_MB  = 150;
 
-// Archivos del shell — se cachean en la instalación y nunca expiran
+// Archivos del shell — rutas relativas para mayor compatibilidad
 const SHELL_FILES = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png', // Ajustado a la raíz según tu index.html
+  './icon-512.png'
 ];
 
-// Archivos de contenido — se pre-cachean en install Y se actualizan en background
-// FIX v1.2.1: estos archivos ahora se descargan durante la instalación
+// Archivos de contenido
 const CONTENT_PREFETCH = [
-  '/CPEM-99/historia.html',
-  '/diccionario.html',
-  '/contenido/diccionario.json',
-  '/contenido/modulos.json',
-  '/contenido/lengua.json',
-  '/contenido/ciencias-sociales.json',
-  '/contenido/cultura-identidad.json',
-  '/contenido/territorio-comunidades.json'
+  './CPEM-99/historia.html',
+  './diccionario.html',
+  './contenido/diccionario.json',
+  './contenido/modulos.json',
+  './contenido/lengua.json',
+  './contenido/ciencias-sociales.json',
+  './contenido/cultura-identidad.json',
+  './contenido/territorio-comunidades.json'
 ];
 
-// ─── DETECCIÓN DE CONECTIVIDAD (Paso 1) ─────────────────
+// ─── DETECCIÓN DE CONECTIVIDAD ─────────────────
 function esConexionEconomica() {
   const conn = navigator.connection;
   if (!conn) return true;
   if (conn.saveData) return false;
-  if (conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g') return false;
-  return true;
+  const slow = ['2g', 'slow-2g', '3g']; // Incluimos 3g para ser más conservadores con el plan de datos
+  return !slow.includes(conn.effectiveType);
 }
 
-// ─── GESTIÓN DE ALMACENAMIENTO (Paso 3) ─────────────────
+// ─── GESTIÓN DE ALMACENAMIENTO ─────────────────
 async function getCacheSize() {
-  const cache = await caches.open(CACHE_CONTENT);
-  const keys = await cache.keys();
-  let totalBytes = 0;
+  try {
+    const cache = await caches.open(CACHE_CONTENT);
+    const keys = await cache.keys();
+    let totalBytes = 0;
 
-  for (const request of keys) {
-    const response = await cache.match(request);
-    if (response) {
-      const blob = await response.blob();
-      totalBytes += blob.size;
+    for (const request of keys) {
+      const response = await cache.match(request);
+      if (response) {
+        const blob = await response.blob();
+        totalBytes += blob.size;
+      }
     }
-  }
 
-  return {
-    bytes: totalBytes,
-    mb: (totalBytes / (1024 * 1024)).toFixed(1),
-    archivos: keys.length
-  };
+    return {
+      bytes: totalBytes,
+      mb: (totalBytes / (1024 * 1024)).toFixed(1),
+      archivos: keys.length
+    };
+  } catch (e) {
+    return { bytes: 0, mb: 0, archivos: 0 };
+  }
 }
 
 async function limpiarCacheViejo(espacioNecesarioMB = 20) {
   const cache = await caches.open(CACHE_CONTENT);
   const keys = await cache.keys();
-
   if (keys.length === 0) return 0;
 
   const archivosConFecha = [];
   for (const request of keys) {
     const response = await cache.match(request);
-    const fecha = response.headers.get('date')
-      ? new Date(response.headers.get('date')).getTime()
-      : Date.now() - (keys.indexOf(request) * 86400000);
-
+    // Intentamos obtener la fecha de la cabecera o usamos una estimada
+    const dateHeader = response.headers.get('date');
+    const fecha = dateHeader ? new Date(dateHeader).getTime() : Date.now();
     archivosConFecha.push({ request, fecha });
   }
 
+  // Ordenar por más viejo primero
   archivosConFecha.sort((a, b) => a.fecha - b.fecha);
 
   let liberadoMB = 0;
-  const maxLiberar = Math.min(archivosConFecha.length, 5);
+  // Borramos máximo el 20% de los archivos por vez para no vaciar todo
+  const maxABorrar = Math.ceil(archivosConFecha.length * 0.2);
 
-  for (let i = 0; i < maxLiberar && liberadoMB < espacioNecesarioMB; i++) {
+  for (let i = 0; i < maxABorrar && liberadoMB < espacioNecesarioMB; i++) {
     const item = archivosConFecha[i];
     const response = await cache.match(item.request);
     if (response) {
@@ -91,42 +93,24 @@ async function limpiarCacheViejo(espacioNecesarioMB = 20) {
       const mb = blob.size / (1024 * 1024);
       await cache.delete(item.request);
       liberadoMB += mb;
-      console.log(`[SW] Eliminado archivo viejo: ${item.request.url} (${mb.toFixed(1)} MB)`);
     }
   }
-
   return liberadoMB;
 }
 
 // ─── INSTALACIÓN ───────────────────────────────
-// FIX v1.2.1: se pre-cachea TAMBIÉN el contenido durante la instalación.
-// Los archivos de contenido se descargan con Promise.allSettled para que
-// un fallo individual no cancele toda la instalación.
 self.addEventListener('install', event => {
   event.waitUntil(
     Promise.all([
-      // Shell: obligatorio — si falla, el SW no se instala
       caches.open(CACHE_SHELL).then(cache => cache.addAll(SHELL_FILES)),
-
-      // Contenido: opcional — fallas individuales no bloquean la instalación
       caches.open(CACHE_CONTENT).then(cache =>
         Promise.allSettled(
           CONTENT_PREFETCH.map(url =>
-            fetch(url)
-              .then(res => {
-                if (res.ok) {
-                  cache.put(url, res);
-                  console.log(`[SW] Pre-cacheado en install: ${url}`);
-                }
-              })
-              .catch(err => console.warn(`[SW] No se pudo pre-cachear ${url}: ${err.message}`))
+            fetch(url).then(res => res.ok ? cache.put(url, res) : null)
           )
         )
       )
-    ]).then(() => {
-      console.log('[SW] Instalación completa — shell y contenido cacheados');
-      return self.skipWaiting();
-    })
+    ]).then(() => self.skipWaiting())
   );
 });
 
@@ -137,96 +121,48 @@ self.addEventListener('activate', event => {
       return Promise.all(
         keys
           .filter(key => key !== CACHE_SHELL && key !== CACHE_CONTENT)
-          .map(key => {
-            console.log(`[SW] Eliminando caché viejo: ${key}`);
-            return caches.delete(key);
-          })
+          .map(key => caches.delete(key))
       );
-    }).then(() => {
-      return self.clients.claim();
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
 // ─── ESTRATEGIA DE FETCH ────────────────────────
-// FIX v1.2.1: se agregó /CPEM-99/ al bloque staleWhileRevalidate
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Shell files → Cache First estricto
-  if (isShellFile(url.pathname)) {
+  // 1. Shell -> Cache First
+  if (SHELL_FILES.some(file => url.pathname.endsWith(file.replace('./', '')))) {
     event.respondWith(cacheFirst(event.request));
     return;
   }
 
-  // Archivos de contenido JSON/HTML/multimedia → Stale While Revalidate
-  // FIX: se agrega /CPEM-99/ para capturar historia.html y futuros archivos
+  // 2. Contenido Dinámico -> Stale While Revalidate
   if (
-    url.pathname.startsWith('/contenido/') ||
-    url.pathname.startsWith('/media/')     ||
-    url.pathname.startsWith('/CPEM-99/')   ||
-    url.pathname === '/diccionario.html'
+    url.pathname.includes('/contenido/') ||
+    url.pathname.includes('/CPEM-99/') ||
+    url.pathname.endsWith('diccionario.html')
   ) {
     event.respondWith(staleWhileRevalidate(event.request));
     return;
   }
 
-  // Todo lo demás → Network First con fallback al caché
+  // 3. Otros -> Network First
   event.respondWith(networkFirstWithFallback(event.request));
 });
 
-// ─── BACKGROUND SYNC ───────────────────────────
-self.addEventListener('sync', event => {
-  if (event.tag === 'sync-content') {
-    event.waitUntil(syncNewContent());
-  }
-});
-
-// ─── PERIODIC BACKGROUND SYNC ──────────────────
-self.addEventListener('periodicsync', event => {
-  if (event.tag === 'periodic-content-update') {
-    event.waitUntil(syncNewContent());
-  }
-});
-
-// ─── NOTIFICACIONES PUSH ───────────────────────
-self.addEventListener('push', event => {
-  const data = event.data ? event.data.json() : {};
-  const title   = data.title   || 'CPEM N° 99 — Nuevo contenido';
-  const options = {
-    body:     data.body    || 'Hay nuevo material disponible para descargar.',
-    icon:     '/icons/icon-192.png',
-    badge:    '/icons/icon-192.png',
-    tag:      'nuevo-contenido',
-    renotify: false,
-    data:     { url: data.url || '/' }
-  };
-  event.waitUntil(self.registration.showNotification(title, options));
-});
-
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/')
-  );
-});
-
-// ─── MENSAJES DESDE LA APP (Paso 2 + 3) ─────────────────────
+// ─── COMUNICACIÓN ──────────────────────────────
 self.addEventListener('message', event => {
-  // Paso 2: Forzar sincronización
-  if (event.data && event.data.type === 'FORCE_SYNC') {
+  if (event.data?.type === 'FORCE_SYNC') {
     event.waitUntil(
       syncNewContent(true).then(() => {
         event.source.postMessage({ type: 'SYNC_COMPLETE', success: true });
-      }).catch(error => {
-        event.source.postMessage({ type: 'SYNC_ERROR', error: error.message });
       })
     );
   }
 
-  // Paso 3: Reportar estado de almacenamiento
-  if (event.data && event.data.type === 'GET_STORAGE_STATUS') {
+  if (event.data?.type === 'GET_STORAGE_STATUS') {
     event.waitUntil(
       getCacheSize().then(stats => {
         event.source.postMessage({
@@ -234,26 +170,22 @@ self.addEventListener('message', event => {
           usadoMB: stats.mb,
           archivos: stats.archivos,
           maximoMB: MAX_CACHE_MB,
-          porcentaje: Math.round((parseFloat(stats.mb) / MAX_CACHE_MB) * 100)
+          porcentaje: Math.min(100, Math.round((parseFloat(stats.mb) / MAX_CACHE_MB) * 100))
         });
       })
     );
   }
 });
 
-// ════════════════════════════════════════════════
-//  FUNCIONES DE CACHÉ
-// ════════════════════════════════════════════════
+// ─── FUNCIONES AUXILIARES ──────────────────────
 
 async function cacheFirst(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
   try {
     const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_SHELL);
-      cache.put(request, response.clone());
-    }
+    const cache = await caches.open(CACHE_SHELL);
+    cache.put(request, response.clone());
     return response;
   } catch {
     return offlineFallback(request);
@@ -282,94 +214,37 @@ async function networkFirstWithFallback(request) {
     }
     return response;
   } catch {
-    const cached = await caches.match(request);
-    return cached || offlineFallback(request);
+    return await caches.match(request) || offlineFallback(request);
   }
 }
 
-// Sincroniza contenido con gestión de espacio (Paso 3)
 async function syncNewContent(force = false) {
-  // Paso 1: Verificar si debemos sincronizar
-  if (!force && !esConexionEconomica()) {
-    console.log('[SW] Sincronización pospuesta: protegiendo datos móviles');
-    return { status: 'pospuesto', razon: 'datos' };
-  }
+  if (!force && !esConexionEconomica()) return;
 
-  // Paso 3: Verificar espacio disponible antes de descargar
   const stats = await getCacheSize();
-  if (parseFloat(stats.mb) > MAX_CACHE_MB) {
-    console.log(`[SW] Caché lleno (${stats.mb} MB). Limpiando archivos viejos...`);
-    const liberado = await limpiarCacheViejo(30);
-    if (liberado === 0) {
-      console.warn('[SW] No se pudo liberar espacio. Cancelando sincronización.');
-      return { status: 'error', razon: 'sin_espacio' };
-    }
+  if (parseFloat(stats.mb) > MAX_CACHE_MB * 0.9) { // Limpia si llega al 90%
+    await limpiarCacheViejo(25);
   }
 
   const cache = await caches.open(CACHE_CONTENT);
-  const updates = await Promise.allSettled(
+  await Promise.allSettled(
     CONTENT_PREFETCH.map(async url => {
       try {
-        const response = await fetch(url, { cache: 'no-cache' });
-        if (response.ok) {
-          await cache.put(url, response);
-          console.log(`[SW] Contenido actualizado: ${url}`);
-        }
-      } catch (err) {
-        console.log(`[SW] No se pudo descargar ${url}: ${err.message}`);
-      }
+        const res = await fetch(url, { cache: 'reload' });
+        if (res.ok) await cache.put(url, res);
+      } catch (e) { }
     })
   );
-
-  // Reportar nuevo estado de almacenamiento a todas las pestañas
+  
+  // Notificar a clientes
   const nuevasStats = await getCacheSize();
-  const allClients = await self.clients.matchAll();
-  allClients.forEach(client => {
-    client.postMessage({
-      type: 'STORAGE_STATUS',
-      usadoMB: nuevasStats.mb,
-      archivos: nuevasStats.archivos,
-      maximoMB: MAX_CACHE_MB,
-      porcentaje: Math.round((parseFloat(nuevasStats.mb) / MAX_CACHE_MB) * 100)
-    });
-  });
-
-  return updates;
-}
-
-function isShellFile(pathname) {
-  return SHELL_FILES.some(file => {
-    const normalized = file === '/' ? '/index.html' : file;
-    return pathname === file || pathname === normalized;
-  });
+  const clients = await self.clients.matchAll();
+  clients.forEach(c => c.postMessage({ type: 'STORAGE_STATUS', ...nuevasStats }));
 }
 
 function offlineFallback(request) {
   if (request.headers.get('Accept')?.includes('text/html')) {
-    return new Response(`
-      <!DOCTYPE html>
-      <html lang="es">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CPEM N° 99 — Sin conexión</title>
-        <style>
-          body { font-family: sans-serif; display: flex; align-items: center;
-                 justify-content: center; min-height: 100vh; margin: 0;
-                 background: #3B1F14; color: #F5EFE0; text-align: center; padding: 32px; }
-          h1 { font-size: 22px; margin-bottom: 12px; }
-          p  { font-size: 14px; opacity: 0.7; line-height: 1.6; }
-        </style>
-      </head>
-      <body>
-        <div>
-          <h1>CPEM N° 99</h1>
-          <p>No hay conexión en este momento.<br>
-             Abrí la app cuando tengas señal para cargar el contenido.</p>
-        </div>
-      </body>
-      </html>
-    `, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    return caches.match('./index.html'); // Intentamos mostrar la home si no hay nada
   }
   return new Response('', { status: 503 });
 }
