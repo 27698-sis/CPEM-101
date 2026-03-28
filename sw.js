@@ -15,8 +15,8 @@ const SHELL_FILES = [
   '/CPEM-99/',
   '/CPEM-99/index.html',
   '/CPEM-99/manifest.json',
-  '/CPEM-99/icons/icon-192.png',
-  '/CPEM-99/icons/icon-512.png'
+  '/CPEM-99/icon-192.png',
+  '/CPEM-99/icon-512.png'
 ];
 
 // Archivos de contenido — se pre-cachean en install Y se actualizan en background
@@ -178,8 +178,8 @@ self.addEventListener('push', event => {
   const title   = data.title || 'CPEM N° 99 — Nuevo contenido';
   const options = {
     body:     data.body  || 'Hay nuevo material disponible.',
-    icon:     '/CPEM-99/icons/icon-192.png',
-    badge:    '/CPEM-99/icons/icon-192.png',
+    icon:     '/CPEM-99/icon-192.png',
+    badge:    '/CPEM-99/icon-192.png',
     tag:      'nuevo-contenido',
     renotify: false,
     data:     { url: data.url || '/CPEM-99/' }
