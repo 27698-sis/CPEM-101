@@ -19,11 +19,11 @@
     
     .header { background: linear-gradient(155deg, #3B1F14 0%, #5C2E1A 55%, #2E4040 100%); padding: 20px 18px 18px; flex-shrink: 0; }
     .header-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .back-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(196,136,59,0.3); background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--cream); text-decoration: none; font-size: 20px; }
+    .back-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(196,136,59,0.3); background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; [...]
     .header-title { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; color: var(--cream); flex: 1; }
     
     .search-box { position: relative; }
-    .search-input { width: 100%; padding: 14px 18px 14px 44px; border: 1px solid rgba(196,136,59,0.3); border-radius: 12px; background: rgba(255,255,255,0.1); color: var(--cream); font-family: 'Nunito', sans-serif; font-size: 15px; outline: none; }
+    .search-input { width: 100%; padding: 14px 18px 14px 44px; border: 1px solid rgba(196,136,59,0.3); border-radius: 12px; background: rgba(255,255,255,0.1); color: var(--cream); font-family: 'Nunito[...]
     .search-input::placeholder { color: var(--text-muted); }
     .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ocre); pointer-events: none; }
     
@@ -84,7 +84,7 @@
       font-style: italic;
     }
     
-    .nav-bottom { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; background: white; border-top: 1px solid #ddd; padding: 12px 18px; display: flex; gap: 8px; flex-shrink: 0; }
+    .nav-bottom { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; background: white; border-top: 1px solid #ddd; padding: 12px 18px; display: flex; g[...]
     .nav-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; transition: background 0.2s; }
     .nav-btn.active { background: var(--ocre); color: white; }
     .nav-btn:not(.active) { background: #f0f0f0; color: #666; }
@@ -102,7 +102,7 @@
   <div class="app-frame">
     <div class="header">
       <div class="header-top">
-        <a href="/" class="back-btn">←</a>
+        <a href="/CPEM-99/" class="back-btn">←</a>
         <h1 class="header-title">Diccionario Mapuche</h1>
       </div>
       <div class="search-box">
@@ -124,130 +124,31 @@
   </div>
 
   <script>
-    const dictionary = {
-      version: "1.1",
-      ultima_actualizacion: "2026-08-22",
-      categorias: [
-        {
-          id: "saludos",
-          nombre: "Saludos y Cortesía",
-          color: "ocre",
-          icon: "👋",
-          palabras: [
-            {"mapu": "Mari mari", "es": "Hola", "pron": "ma-ri ma-ri"},
-            {"mapu": "Mari mari antü", "es": "Buenos días", "pron": "ma-ri ma-ri an-tü"},
-            {"mapu": "Mari mari rangiñ", "es": "Buenas tardes", "pron": "ma-ri ma-ri ran-giñ"},
-            {"mapu": "Mari mari püllay", "es": "Buenas noches", "pron": "ma-ri ma-ri pü-llay"},
-            {"mapu": "Pewkayal", "es": "Adiós", "pron": "pew-kay-yal"},
-            {"mapu": "Fey mai", "es": "Hasta luego", "pron": "fey mai"},
-            {"mapu": "Chaltu may", "es": "Gracias", "pron": "chal-tu may"},
-            {"mapu": "Chaltu may mapu", "es": "Muchas gracias", "pron": "chal-tu may ma-pu"},
-            {"mapu": "Fia may", "es": "Por favor", "pron": "fi-a may"},
-            {"mapu": "May", "es": "Sí", "pron": "may"},
-            {"mapu": "Nay", "es": "No", "pron": "nay"},
-            {"mapu": "Ayüpäy", "es": "Disculpa", "pron": "a-yü-pä-y"}
-          ]
-        },
-        {
-          id: "familia",
-          nombre: "Familia",
-          color: "terracota",
-          icon: "👨‍👩‍👧‍👦",
-          palabras: [
-            {"mapu": "Ñuke", "es": "Madre", "pron": "ñu-ke"},
-            {"mapu": "Chaw", "es": "Padre", "pron": "chaw"},
-            {"mapu": "Pichi", "es": "Hijo", "pron": "pi-chi"},
-            {"mapu": "Pichi domo", "es": "Hija", "pron": "pi-chi do-mo"},
-            {"mapu": "Kuku", "es": "Abuela", "pron": "ku-ku"},
-            {"mapu": "Kuku (masc)", "es": "Abuelo", "pron": "ku-ku"},
-            {"mapu": "Ká", "es": "Hermano", "pron": "ka"},
-            {"mapu": "Lamngen", "es": "Hermana", "pron": "lam-ngen"},
-            {"mapu": "Malon", "es": "Tío", "pron": "ma-lon"},
-            {"mapu": "Kuku pual", "es": "Tía", "pron": "ku-ku pu-al"},
-            {"mapu": "Tunten", "es": "Primo", "pron": "tun-ten"},
-            {"mapu": "Lof", "es": "Familia", "pron": "lof"}
-          ]
-        },
-        {
-          id: "escuela",
-          nombre: "La Escuela",
-          color: "turquoise",
-          icon: "📚",
-          palabras: [
-            {"mapu": "Kimche", "es": "Escuela", "pron": "kim-che"},
-            {"mapu": "Kimchefe", "es": "Maestro", "pron": "kim-che-fe"},
-            {"mapu": "Kimchefe domo", "es": "Maestra", "pron": "kim-che-fe do-mo"},
-            {"mapu": "Kimchewe", "es": "Estudiante", "pron": "kim-che-we"},
-            {"mapu": "Wülngiñ", "es": "Libro", "pron": "wül-ngiñ"},
-            {"mapu": "Witral", "es": "Cuaderno", "pron": "wi-tral"},
-            {"mapu": "Luwé", "es": "Lápiz", "pron": "lu-wé"},
-            {"mapu": "Kalül", "es": "Pizarra", "pron": "ka-lül"},
-            {"mapu": "Kimen", "es": "Aprender", "pron": "ki-men"},
-            {"mapu": "Wiñan", "es": "Escribir", "pron": "wi-ñan"},
-            {"mapu": "Winkun", "es": "Leer", "pron": "win-kun"},
-            {"mapu": "Kuse", "es": "Pregunta", "pron": "ku-se"}
-          ]
-        },
-        {
-          id: "naturaleza",
-          nombre: "Naturaleza",
-          color: "earth-mid",
-          icon: "🌿",
-          palabras: [
-            {"mapu": "Ko", "es": "Agua", "pron": "ko"},
-            {"mapu": "Mapu", "es": "Tierra", "pron": "ma-pu"},
-            {"mapu": "Antü", "es": "Sol", "pron": "an-tü"},
-            {"mapu": "Küyen", "es": "Luna", "pron": "kü-yen"},
-            {"mapu": "Tren", "es": "Estrella", "pron": "tren"},
-            {"mapu": "Kütral", "es": "Fuego", "pron": "kü-tral"},
-            {"mapu": "Püllay", "es": "Viento", "pron": "pü-llay"},
-            {"mapu": "Kurü", "es": "Lluvia", "pron": "ku-rü"},
-            {"mapu": "Rawe", "es": "Árbol", "pron": "ra-we"},
-            {"mapu": "Pewma", "es": "Flor", "pron": "pew-ma"},
-            {"mapu": "Opüm", "es": "Nieve", "pron": "o-püm"},
-            {"mapu": "Wachu", "es": "Montaña", "pron": "wa-chu"}
-          ]
-        },
-        {
-          id: "numeros",
-          nombre: "Números",
-          color: "ocre",
-          icon: "🔢",
-          palabras: [
-            {"mapu": "Kiñe", "es": "Uno", "pron": "ki-ñe"},
-            {"mapu": "Epu", "es": "Dos", "pron": "e-pu"},
-            {"mapu": "Küla", "es": "Tres", "pron": "kü-la"},
-            {"mapu": "Meli", "es": "Cuatro", "pron": "me-li"},
-            {"mapu": "Kechu", "es": "Cinco", "pron": "ke-chu"},
-            {"mapu": "Marla", "es": "Diez", "pron": "mar-la"}
-          ]
-        },
-        {
-          id: "colores",
-          nombre: "Colores",
-          color: "turquoise",
-          icon: "🎨",
-          palabras: [
-            {"mapu": "Meli kutral", "es": "Rojo", "pron": "me-li ku-tral"},
-            {"mapu": "Kümeñ", "es": "Blanco", "pron": "kü-meñ"},
-            {"mapu": "Kafu", "es": "Negro", "pron": "ka-fu"},
-            {"mapu": "Kütrülpü", "es": "Azul", "pron": "kü-trül-pü"},
-            {"mapu": "Pitra", "es": "Verde", "pron": "pit-ra"},
-            {"mapu": "Willi", "es": "Amarillo", "pron": "wil-li"}
-          ]
-        }
-      ]
-    };
+    let dictionary = null;
 
-    function renderCategories() {
+    async function loadDictionary() {
+      try {
+        const res = await fetch('contenido/diccionario.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        dictionary = data;
+        renderCategoriesFromData(dictionary);
+      } catch (err) {
+        console.error('No se pudo cargar el diccionario:', err);
+        // Fallback mínimo: mostrar mensaje
+        document.getElementById('categoriesContainer').innerHTML = '<p style="color:#666">No hay contenido disponible offline.</p>';
+      }
+    }
+
+    function renderCategoriesFromData(data) {
       const container = document.getElementById('categoriesContainer');
       container.innerHTML = '';
-      
-      dictionary.categorias.forEach(cat => {
+      data.categorias.forEach(cat => {
         const card = document.createElement('div');
         card.className = `category-card ${cat.id}`;
+        const icon = cat.icon || '📚';
         card.innerHTML = `
-          <div class="category-icon">${cat.icon}</div>
+          <div class="category-icon">${icon}</div>
           <div class="category-name">${cat.nombre}</div>
         `;
         card.onclick = () => showWordList(cat);
@@ -258,25 +159,20 @@
     function showWordList(category) {
       const container = document.getElementById('categoriesContainer');
       const listContainer = document.getElementById('wordListContainer');
-      
       container.style.display = 'none';
-      
       let html = `<h2 class="list-title">${category.nombre}</h2>`;
       html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
-      
       category.palabras.forEach(word => {
         html += `
           <div class="word-item">
-            <div class="word-mapuche">${word.mapu}</div>
-            <div class="word-spanish">→ ${word.es}</div>
-            <div class="word-pronunciation">📢 ${word.pron}</div>
+            <div class="word-mapuche">${word.mapu || word.mapuche || ''}</div>
+            <div class="word-spanish">→ ${word.es || ''}</div>
+            <div class="word-pronunciation">📢 ${word.pron || ''}</div>
           </div>
         `;
       });
-      
       html += '</div>';
       listContainer.innerHTML = html;
-      
       const backBtn = document.querySelector('.back-btn');
       backBtn.onclick = (e) => {
         e.preventDefault();
@@ -299,7 +195,7 @@
     }
 
     // Inicializar
-    renderCategories();
+    loadDictionary();
   </script>
 </body>
 </html>

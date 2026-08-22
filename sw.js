@@ -1,11 +1,11 @@
 // ─────────────────────────────────────────────
 //  CPEM N° 99 — Service Worker
 //  Estrategia: Cache First + Background Update
-//  v1.2.2 — FIX: rutas corregidas para /CPEM-99/
+//  v1.2.3 — FIX: rutas corregidas, MessageChannel responder
 //  URL real: https://27698-sis.github.io/CPEM-99/
 // ─────────────────────────────────────────────
 
-const APP_VERSION   = 'v1.2.2';
+const APP_VERSION   = 'v1.2.3';
 const CACHE_SHELL   = `cpem99-shell-${APP_VERSION}`;
 const CACHE_CONTENT = `cpem99-content-${APP_VERSION}`;
 const MAX_CACHE_MB  = 150;
@@ -15,20 +15,15 @@ const SHELL_FILES = [
   '/CPEM-99/',
   '/CPEM-99/index.html',
   '/CPEM-99/manifest.json',
-  '/CPEM-99/icon-192.png',
-  '/CPEM-99/icon-512.png'
+  '/CPEM-99/icons/icon-192.png',
+  '/CPEM-99/icons/icon-512.png'
 ];
 
 // Archivos de contenido — se pre-cachean en install Y se actualizan en background
 const CONTENT_PREFETCH = [
   '/CPEM-99/historia.html',
   '/CPEM-99/diccionario.html',
-  '/CPEM-99/contenido/diccionario.json',
-  '/CPEM-99/contenido/modulos.json',
-  '/CPEM-99/contenido/lengua.json',
-  '/CPEM-99/contenido/ciencias-sociales.json',
-  '/CPEM-99/contenido/cultura-identidad.json',
-  '/CPEM-99/contenido/territorio-comunidades.json'
+  '/CPEM-99/contenido/diccionario.json'
 ];
 
 // ─── DETECCIÓN DE CONECTIVIDAD ───────────────
@@ -111,7 +106,7 @@ self.addEventListener('install', event => {
         )
       )
     ]).then(() => {
-      console.log('[SW] Instalación completa v1.2.2');
+      console.log('[SW] Instalación completa v1.2.3');
       return self.skipWaiting();
     })
   );
@@ -178,8 +173,8 @@ self.addEventListener('push', event => {
   const title   = data.title || 'CPEM N° 99 — Nuevo contenido';
   const options = {
     body:     data.body  || 'Hay nuevo material disponible.',
-    icon:     '/CPEM-99/icon-192.png',
-    badge:    '/CPEM-99/icon-192.png',
+    icon:     '/CPEM-99/icons/icon-192.png',
+    badge:    '/CPEM-99/icons/icon-192.png',
     tag:      'nuevo-contenido',
     renotify: false,
     data:     { url: data.url || '/CPEM-99/' }
@@ -194,23 +189,33 @@ self.addEventListener('notificationclick', event => {
 
 // ─── MENSAJES DESDE LA APP ───────────────────
 self.addEventListener('message', event => {
+  // preferir responder por MessageChannel (event.ports[0]) si el cliente lo proporcionó
+  const responder = (event.ports && event.ports[0]) ? event.ports[0] : event.source;
+
   if (event.data && event.data.type === 'FORCE_SYNC') {
     event.waitUntil(
       syncNewContent(true)
-        .then(() => event.source.postMessage({ type: 'SYNC_COMPLETE', success: true }))
-        .catch(error => event.source.postMessage({ type: 'SYNC_ERROR', error: error.message }))
+        .then(() => {
+          try { responder.postMessage({ type: 'SYNC_COMPLETE', success: true }); } catch (e) { /* ignora */ }
+        })
+        .catch(error => {
+          try { responder.postMessage({ type: 'SYNC_ERROR', error: error.message }); } catch (e) { /* ignora */ }
+        })
     );
+    return;
   }
   if (event.data && event.data.type === 'GET_STORAGE_STATUS') {
     event.waitUntil(
       getCacheSize().then(stats => {
-        event.source.postMessage({
-          type: 'STORAGE_STATUS',
-          usadoMB: stats.mb,
-          archivos: stats.archivos,
-          maximoMB: MAX_CACHE_MB,
-          porcentaje: Math.round((parseFloat(stats.mb) / MAX_CACHE_MB) * 100)
-        });
+        try {
+          responder.postMessage({
+            type: 'STORAGE_STATUS',
+            usadoMB: stats.mb,
+            archivos: stats.archivos,
+            maximoMB: MAX_CACHE_MB,
+            porcentaje: Math.round((parseFloat(stats.mb) / MAX_CACHE_MB) * 100)
+          });
+        } catch (e) { /* ignora */ }
       })
     );
   }
