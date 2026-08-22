@@ -55,20 +55,47 @@
     .category-icon { font-size: 32px; margin-bottom: 8px; }
     .category-name { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     
-    .word-list { display: none; }
-    .word-list.active { display: flex; flex-direction: column; gap: 12px; }
+    .word-item { 
+      background: #FFFFFF; 
+      padding: 16px; 
+      border-radius: 8px; 
+      border-left: 5px solid var(--ocre);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
     
-    .word-item { background: rgba(255,255,255,0.1); padding: 14px; border-radius: 8px; border-left: 4px solid var(--ocre); }
-    .word-spanish { font-weight: 600; color: var(--cream); margin-bottom: 8px; font-size: 15px; }
-    .word-mapuche-section { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 6px; }
-    .word-mapuche-label { color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; min-width: 50px; }
-    .word-mapuche { font-family: 'Lora', serif; color: white; font-size: 15px; font-weight: 500; }
-    .word-pronunciation { font-size: 12px; color: var(--text-muted); font-style: italic; }
+    .word-mapuche { 
+      font-family: 'Lora', serif; 
+      color: #3B1F14; 
+      font-size: 16px; 
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .word-spanish { 
+      font-weight: 500; 
+      color: #5C2E1A; 
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    
+    .word-pronunciation { 
+      font-size: 12px; 
+      color: #9B7A5C; 
+      font-style: italic;
+    }
     
     .nav-bottom { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; background: white; border-top: 1px solid #ddd; padding: 12px 18px; display: flex; gap: 8px; flex-shrink: 0; }
     .nav-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; transition: background 0.2s; }
     .nav-btn.active { background: var(--ocre); color: white; }
     .nav-btn:not(.active) { background: #f0f0f0; color: #666; }
+    
+    .list-title { 
+      font-family: 'Cinzel', serif; 
+      color: #3B1F14; 
+      margin-bottom: 18px; 
+      font-size: 18px;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -107,18 +134,18 @@
           color: "ocre",
           icon: "👋",
           palabras: [
-            {"es": "Hola", "mapu": "Mari mari", "pron": "ma-ri ma-ri"},
-            {"es": "Buenos días", "mapu": "Mari mari antü", "pron": "ma-ri ma-ri an-tü"},
-            {"es": "Buenas tardes", "mapu": "Mari mari rangiñ", "pron": "ma-ri ma-ri ran-giñ"},
-            {"es": "Buenas noches", "mapu": "Mari mari püllay", "pron": "ma-ri ma-ri pü-llay"},
-            {"es": "Adiós", "mapu": "Pewkayal", "pron": "pew-kay-yal"},
-            {"es": "Hasta luego", "mapu": "Fey mai", "pron": "fey mai"},
-            {"es": "Gracias", "mapu": "Chaltu may", "pron": "chal-tu may"},
-            {"es": "Muchas gracias", "mapu": "Chaltu may mapu", "pron": "chal-tu may ma-pu"},
-            {"es": "Por favor", "mapu": "Fia may", "pron": "fi-a may"},
-            {"es": "Sí", "mapu": "May", "pron": "may"},
-            {"es": "No", "mapu": "Nay", "pron": "nay"},
-            {"es": "Disculpa", "mapu": "Ayüpäy", "pron": "a-yü-pä-y"}
+            {"mapu": "Mari mari", "es": "Hola", "pron": "ma-ri ma-ri"},
+            {"mapu": "Mari mari antü", "es": "Buenos días", "pron": "ma-ri ma-ri an-tü"},
+            {"mapu": "Mari mari rangiñ", "es": "Buenas tardes", "pron": "ma-ri ma-ri ran-giñ"},
+            {"mapu": "Mari mari püllay", "es": "Buenas noches", "pron": "ma-ri ma-ri pü-llay"},
+            {"mapu": "Pewkayal", "es": "Adiós", "pron": "pew-kay-yal"},
+            {"mapu": "Fey mai", "es": "Hasta luego", "pron": "fey mai"},
+            {"mapu": "Chaltu may", "es": "Gracias", "pron": "chal-tu may"},
+            {"mapu": "Chaltu may mapu", "es": "Muchas gracias", "pron": "chal-tu may ma-pu"},
+            {"mapu": "Fia may", "es": "Por favor", "pron": "fi-a may"},
+            {"mapu": "May", "es": "Sí", "pron": "may"},
+            {"mapu": "Nay", "es": "No", "pron": "nay"},
+            {"mapu": "Ayüpäy", "es": "Disculpa", "pron": "a-yü-pä-y"}
           ]
         },
         {
@@ -127,18 +154,18 @@
           color: "terracota",
           icon: "👨‍👩‍👧‍👦",
           palabras: [
-            {"es": "Madre", "mapu": "Ñuke", "pron": "ñu-ke"},
-            {"es": "Padre", "mapu": "Chaw", "pron": "chaw"},
-            {"es": "Hijo", "mapu": "Pichi", "pron": "pi-chi"},
-            {"es": "Hija", "mapu": "Pichi domo", "pron": "pi-chi do-mo"},
-            {"es": "Abuela", "mapu": "Kuku", "pron": "ku-ku"},
-            {"es": "Abuelo", "mapu": "Kuku (masc)", "pron": "ku-ku"},
-            {"es": "Hermano", "mapu": "Ká", "pron": "ka"},
-            {"es": "Hermana", "mapu": "Lamngen", "pron": "lam-ngen"},
-            {"es": "Tío", "mapu": "Malon", "pron": "ma-lon"},
-            {"es": "Tía", "mapu": "Kuku pual", "pron": "ku-ku pu-al"},
-            {"es": "Primo", "mapu": "Tunten", "pron": "tun-ten"},
-            {"es": "Familia", "mapu": "Lof", "pron": "lof"}
+            {"mapu": "Ñuke", "es": "Madre", "pron": "ñu-ke"},
+            {"mapu": "Chaw", "es": "Padre", "pron": "chaw"},
+            {"mapu": "Pichi", "es": "Hijo", "pron": "pi-chi"},
+            {"mapu": "Pichi domo", "es": "Hija", "pron": "pi-chi do-mo"},
+            {"mapu": "Kuku", "es": "Abuela", "pron": "ku-ku"},
+            {"mapu": "Kuku (masc)", "es": "Abuelo", "pron": "ku-ku"},
+            {"mapu": "Ká", "es": "Hermano", "pron": "ka"},
+            {"mapu": "Lamngen", "es": "Hermana", "pron": "lam-ngen"},
+            {"mapu": "Malon", "es": "Tío", "pron": "ma-lon"},
+            {"mapu": "Kuku pual", "es": "Tía", "pron": "ku-ku pu-al"},
+            {"mapu": "Tunten", "es": "Primo", "pron": "tun-ten"},
+            {"mapu": "Lof", "es": "Familia", "pron": "lof"}
           ]
         },
         {
@@ -147,18 +174,18 @@
           color: "turquoise",
           icon: "📚",
           palabras: [
-            {"es": "Escuela", "mapu": "Kimche", "pron": "kim-che"},
-            {"es": "Maestro", "mapu": "Kimchefe", "pron": "kim-che-fe"},
-            {"es": "Maestra", "mapu": "Kimchefe domo", "pron": "kim-che-fe do-mo"},
-            {"es": "Estudiante", "mapu": "Kimchewe", "pron": "kim-che-we"},
-            {"es": "Libro", "mapu": "Wülngiñ", "pron": "wül-ngiñ"},
-            {"es": "Cuaderno", "mapu": "Witral", "pron": "wi-tral"},
-            {"es": "Lápiz", "mapu": "Luwé", "pron": "lu-wé"},
-            {"es": "Pizarra", "mapu": "Kalül", "pron": "ka-lül"},
-            {"es": "Aprender", "mapu": "Kimen", "pron": "ki-men"},
-            {"es": "Escribir", "mapu": "Wiñan", "pron": "wi-ñan"},
-            {"es": "Leer", "mapu": "Winkun", "pron": "win-kun"},
-            {"es": "Pregunta", "mapu": "Kuse", "pron": "ku-se"}
+            {"mapu": "Kimche", "es": "Escuela", "pron": "kim-che"},
+            {"mapu": "Kimchefe", "es": "Maestro", "pron": "kim-che-fe"},
+            {"mapu": "Kimchefe domo", "es": "Maestra", "pron": "kim-che-fe do-mo"},
+            {"mapu": "Kimchewe", "es": "Estudiante", "pron": "kim-che-we"},
+            {"mapu": "Wülngiñ", "es": "Libro", "pron": "wül-ngiñ"},
+            {"mapu": "Witral", "es": "Cuaderno", "pron": "wi-tral"},
+            {"mapu": "Luwé", "es": "Lápiz", "pron": "lu-wé"},
+            {"mapu": "Kalül", "es": "Pizarra", "pron": "ka-lül"},
+            {"mapu": "Kimen", "es": "Aprender", "pron": "ki-men"},
+            {"mapu": "Wiñan", "es": "Escribir", "pron": "wi-ñan"},
+            {"mapu": "Winkun", "es": "Leer", "pron": "win-kun"},
+            {"mapu": "Kuse", "es": "Pregunta", "pron": "ku-se"}
           ]
         },
         {
@@ -167,18 +194,18 @@
           color: "earth-mid",
           icon: "🌿",
           palabras: [
-            {"es": "Agua", "mapu": "Ko", "pron": "ko"},
-            {"es": "Tierra", "mapu": "Mapu", "pron": "ma-pu"},
-            {"es": "Sol", "mapu": "Antü", "pron": "an-tü"},
-            {"es": "Luna", "mapu": "Küyen", "pron": "kü-yen"},
-            {"es": "Estrella", "mapu": "Tren", "pron": "tren"},
-            {"es": "Fuego", "mapu": "Kütral", "pron": "kü-tral"},
-            {"es": "Viento", "mapu": "Püllay", "pron": "pü-llay"},
-            {"es": "Lluvia", "mapu": "Kurü", "pron": "ku-rü"},
-            {"es": "Árbol", "mapu": "Rawe", "pron": "ra-we"},
-            {"es": "Flor", "mapu": "Pewma", "pron": "pew-ma"},
-            {"es": "Nieve", "mapu": "Opüm", "pron": "o-püm"},
-            {"es": "Montaña", "mapu": "Wachu", "pron": "wa-chu"}
+            {"mapu": "Ko", "es": "Agua", "pron": "ko"},
+            {"mapu": "Mapu", "es": "Tierra", "pron": "ma-pu"},
+            {"mapu": "Antü", "es": "Sol", "pron": "an-tü"},
+            {"mapu": "Küyen", "es": "Luna", "pron": "kü-yen"},
+            {"mapu": "Tren", "es": "Estrella", "pron": "tren"},
+            {"mapu": "Kütral", "es": "Fuego", "pron": "kü-tral"},
+            {"mapu": "Püllay", "es": "Viento", "pron": "pü-llay"},
+            {"mapu": "Kurü", "es": "Lluvia", "pron": "ku-rü"},
+            {"mapu": "Rawe", "es": "Árbol", "pron": "ra-we"},
+            {"mapu": "Pewma", "es": "Flor", "pron": "pew-ma"},
+            {"mapu": "Opüm", "es": "Nieve", "pron": "o-püm"},
+            {"mapu": "Wachu", "es": "Montaña", "pron": "wa-chu"}
           ]
         },
         {
@@ -187,12 +214,12 @@
           color: "ocre",
           icon: "🔢",
           palabras: [
-            {"es": "Uno", "mapu": "Kiñe", "pron": "ki-ñe"},
-            {"es": "Dos", "mapu": "Epu", "pron": "e-pu"},
-            {"es": "Tres", "mapu": "Küla", "pron": "kü-la"},
-            {"es": "Cuatro", "mapu": "Meli", "pron": "me-li"},
-            {"es": "Cinco", "mapu": "Kechu", "pron": "ke-chu"},
-            {"es": "Diez", "mapu": "Marla", "pron": "mar-la"}
+            {"mapu": "Kiñe", "es": "Uno", "pron": "ki-ñe"},
+            {"mapu": "Epu", "es": "Dos", "pron": "e-pu"},
+            {"mapu": "Küla", "es": "Tres", "pron": "kü-la"},
+            {"mapu": "Meli", "es": "Cuatro", "pron": "me-li"},
+            {"mapu": "Kechu", "es": "Cinco", "pron": "ke-chu"},
+            {"mapu": "Marla", "es": "Diez", "pron": "mar-la"}
           ]
         },
         {
@@ -201,12 +228,12 @@
           color: "turquoise",
           icon: "🎨",
           palabras: [
-            {"es": "Rojo", "mapu": "Meli kutral", "pron": "me-li ku-tral"},
-            {"es": "Blanco", "mapu": "Kümeñ", "pron": "kü-meñ"},
-            {"es": "Negro", "mapu": "Kafu", "pron": "ka-fu"},
-            {"es": "Azul", "mapu": "Kütrülpü", "pron": "kü-trül-pü"},
-            {"es": "Verde", "mapu": "Pitra", "pron": "pit-ra"},
-            {"es": "Amarillo", "mapu": "Willi", "pron": "wil-li"}
+            {"mapu": "Meli kutral", "es": "Rojo", "pron": "me-li ku-tral"},
+            {"mapu": "Kümeñ", "es": "Blanco", "pron": "kü-meñ"},
+            {"mapu": "Kafu", "es": "Negro", "pron": "ka-fu"},
+            {"mapu": "Kütrülpü", "es": "Azul", "pron": "kü-trül-pü"},
+            {"mapu": "Pitra", "es": "Verde", "pron": "pit-ra"},
+            {"mapu": "Willi", "es": "Amarillo", "pron": "wil-li"}
           ]
         }
       ]
@@ -234,20 +261,15 @@
       
       container.style.display = 'none';
       
-      let html = `<h2 style="font-family: 'Cinzel', serif; color: #3B1F14; margin-bottom: 16px;">${category.nombre}</h2>`;
+      let html = `<h2 class="list-title">${category.nombre}</h2>`;
       html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
       
       category.palabras.forEach(word => {
         html += `
           <div class="word-item">
-            <div class="word-spanish">Español: ${word.es}</div>
-            <div class="word-mapuche-section">
-              <span class="word-mapuche-label">Mapudungun:</span>
-              <div>
-                <div class="word-mapuche">${word.mapu}</div>
-                <div class="word-pronunciation">📢 ${word.pron}</div>
-              </div>
-            </div>
+            <div class="word-mapuche">${word.mapu}</div>
+            <div class="word-spanish">→ ${word.es}</div>
+            <div class="word-pronunciation">📢 ${word.pron}</div>
           </div>
         `;
       });
