@@ -58,9 +58,11 @@
     .word-list { display: none; }
     .word-list.active { display: flex; flex-direction: column; gap: 12px; }
     
-    .word-item { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; border-left: 4px solid var(--ocre); }
-    .word-spanish { font-weight: 600; color: var(--cream); margin-bottom: 4px; }
-    .word-mapuche { font-family: 'Lora', serif; color: var(--text-muted); font-size: 14px; }
+    .word-item { background: rgba(255,255,255,0.1); padding: 14px; border-radius: 8px; border-left: 4px solid var(--ocre); }
+    .word-spanish { font-weight: 600; color: var(--cream); margin-bottom: 8px; font-size: 15px; }
+    .word-mapuche-section { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 6px; }
+    .word-mapuche-label { color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; min-width: 50px; }
+    .word-mapuche { font-family: 'Lora', serif; color: white; font-size: 15px; font-weight: 500; }
     .word-pronunciation { font-size: 12px; color: var(--text-muted); font-style: italic; }
     
     .nav-bottom { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; background: white; border-top: 1px solid #ddd; padding: 12px 18px; display: flex; gap: 8px; flex-shrink: 0; }
@@ -238,9 +240,14 @@
       category.palabras.forEach(word => {
         html += `
           <div class="word-item">
-            <div class="word-spanish">${word.es}</div>
-            <div class="word-mapuche">${word.mapu}</div>
-            <div class="word-pronunciation">📢 ${word.pron}</div>
+            <div class="word-spanish">Español: ${word.es}</div>
+            <div class="word-mapuche-section">
+              <span class="word-mapuche-label">Mapudungun:</span>
+              <div>
+                <div class="word-mapuche">${word.mapu}</div>
+                <div class="word-pronunciation">📢 ${word.pron}</div>
+              </div>
+            </div>
           </div>
         `;
       });
