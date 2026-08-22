@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "ultima_actualizacion": "2024-03-24",
+  "version": "1.1",
+  "ultima_actualizacion": "2026-08-22",
   "categorias": [
     {
       "id": "saludos",
@@ -9,11 +9,16 @@
       "palabras": [
         {"es": "Hola", "mapu": "Mari mari", "pron": "ma-ri ma-ri"},
         {"es": "Buenos días", "mapu": "Mari mari antü", "pron": "ma-ri ma-ri an-tü"},
+        {"es": "Buenas tardes", "mapu": "Mari mari rangiñ", "pron": "ma-ri ma-ri ran-giñ"},
         {"es": "Buenas noches", "mapu": "Mari mari püllay", "pron": "ma-ri ma-ri pü-llay"},
         {"es": "Adiós", "mapu": "Pewkayal", "pron": "pew-kay-yal"},
+        {"es": "Hasta luego", "mapu": "Fey mai", "pron": "fey mai"},
         {"es": "Gracias", "mapu": "Chaltu may", "pron": "chal-tu may"},
+        {"es": "Muchas gracias", "mapu": "Chaltu may mapu", "pron": "chal-tu may ma-pu"},
+        {"es": "Por favor", "mapu": "Fia may", "pron": "fi-a may"},
         {"es": "Sí", "mapu": "May", "pron": "may"},
-        {"es": "No", "mapu": "Nay", "pron": "nay"}
+        {"es": "No", "mapu": "Nay", "pron": "nay"},
+        {"es": "Disculpa", "mapu": "Ayüpäy", "pron": "a-yü-pä-y"}
       ]
     },
     {
@@ -23,9 +28,15 @@
       "palabras": [
         {"es": "Madre", "mapu": "Ñuke", "pron": "ñu-ke"},
         {"es": "Padre", "mapu": "Chaw", "pron": "chaw"},
+        {"es": "Hijo", "mapu": "Pichi", "pron": "pi-chi"},
+        {"es": "Hija", "mapu": "Pichi domo", "pron": "pi-chi do-mo"},
         {"es": "Abuela", "mapu": "Kuku", "pron": "ku-ku"},
+        {"es": "Abuelo", "mapu": "Kuku (masc)", "pron": "ku-ku"},
         {"es": "Hermano", "mapu": "Ká", "pron": "ka"},
         {"es": "Hermana", "mapu": "Lamngen", "pron": "lam-ngen"},
+        {"es": "Tío", "mapu": "Malon", "pron": "ma-lon"},
+        {"es": "Tía", "mapu": "Kuku pual", "pron": "ku-ku pu-al"},
+        {"es": "Primo", "mapu": "Tunten", "pron": "tun-ten"},
         {"es": "Familia", "mapu": "Lof", "pron": "lof"}
       ]
     },
@@ -35,23 +46,62 @@
       "color": "turquoise",
       "palabras": [
         {"es": "Escuela", "mapu": "Kimche", "pron": "kim-che"},
-        {"es": "Maestro/a", "mapu": "Kimchefe", "pron": "kim-che-fe"},
+        {"es": "Maestro", "mapu": "Kimchefe", "pron": "kim-che-fe"},
+        {"es": "Maestra", "mapu": "Kimchefe domo", "pron": "kim-che-fe do-mo"},
         {"es": "Estudiante", "mapu": "Kimchewe", "pron": "kim-che-we"},
         {"es": "Libro", "mapu": "Wülngiñ", "pron": "wül-ngiñ"},
-        {"es": "Aprender", "mapu": "Kimen", "pron": "ki-men"}
+        {"es": "Cuaderno", "mapu": "Witral", "pron": "wi-tral"},
+        {"es": "Lápiz", "mapu": "Luwé", "pron": "lu-wé"},
+        {"es": "Pizarra", "mapu": "Kalül", "pron": "ka-lül"},
+        {"es": "Aprender", "mapu": "Kimen", "pron": "ki-men"},
+        {"es": "Escribir", "mapu": "Wiñan", "pron": "wi-ñan"},
+        {"es": "Leer", "mapu": "Winkun", "pron": "win-kun"},
+        {"es": "Pregunta", "mapu": "Kuse", "pron": "ku-se"}
       ]
     },
     {
       "id": "naturaleza",
       "nombre": "Naturaleza",
-      "color": "earth",
+      "color": "earth-mid",
       "palabras": [
         {"es": "Agua", "mapu": "Ko", "pron": "ko"},
         {"es": "Tierra", "mapu": "Mapu", "pron": "ma-pu"},
         {"es": "Sol", "mapu": "Antü", "pron": "an-tü"},
         {"es": "Luna", "mapu": "Küyen", "pron": "kü-yen"},
+        {"es": "Estrella", "mapu": "Tren", "pron": "tren"},
         {"es": "Fuego", "mapu": "Kütral", "pron": "kü-tral"},
-        {"es": "Viento", "mapu": "Püllay", "pron": "pü-llay"}
+        {"es": "Viento", "mapu": "Püllay", "pron": "pü-llay"},
+        {"es": "Lluvia", "mapu": "Kurü", "pron": "ku-rü"},
+        {"es": "Árbol", "mapu": "Rawe", "pron": "ra-we"},
+        {"es": "Flor", "mapu": "Pewma", "pron": "pew-ma"},
+        {"es": "Nieve", "mapu": "Opüm", "pron": "o-püm"},
+        {"es": "Montaña", "mapu": "Wachu", "pron": "wa-chu"}
+      ]
+    },
+    {
+      "id": "numeros",
+      "nombre": "Números",
+      "color": "ocre",
+      "palabras": [
+        {"es": "Uno", "mapu": "Kiñe", "pron": "ki-ñe"},
+        {"es": "Dos", "mapu": "Epu", "pron": "e-pu"},
+        {"es": "Tres", "mapu": "Küla", "pron": "kü-la"},
+        {"es": "Cuatro", "mapu": "Meli", "pron": "me-li"},
+        {"es": "Cinco", "mapu": "Kechu", "pron": "ke-chu"},
+        {"es": "Diez", "mapu": "Marla", "pron": "mar-la"}
+      ]
+    },
+    {
+      "id": "colores",
+      "nombre": "Colores",
+      "color": "turquoise",
+      "palabras": [
+        {"es": "Rojo", "mapu": "Meli kutral", "pron": "me-li ku-tral"},
+        {"es": "Blanco", "mapu": "Kümeñ", "pron": "kü-meñ"},
+        {"es": "Negro", "mapu": "Kafu", "pron": "ka-fu"},
+        {"es": "Azul", "mapu": "Kütrülpü", "pron": "kü-trül-pü"},
+        {"es": "Verde", "mapu": "Pitra", "pron": "pit-ra"},
+        {"es": "Amarillo", "mapu": "Willi", "pron": "wil-li"}
       ]
     }
   ]
