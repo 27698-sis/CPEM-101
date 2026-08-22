@@ -28,4 +28,249 @@
     .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ocre); pointer-events: none; }
     
     .content { flex: 1; overflow-y: auto; padding: 20px 18px 100px; }
-    .categories { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+    .categories { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; width: 100%; }
+    
+    .category-card { 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 24px 16px; 
+      border-radius: 12px; 
+      text-align: center; 
+      cursor: pointer; 
+      transition: transform 0.2s ease, box-shadow 0.2s ease; 
+      min-height: 120px;
+      width: 100%;
+    }
+    .category-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
+    
+    .category-card.saludos { background: linear-gradient(135deg, var(--ocre), #D49A4D); }
+    .category-card.familia { background: linear-gradient(135deg, var(--terracota), #B85A42); }
+    .category-card.escuela { background: linear-gradient(135deg, var(--turquoise), #3A9C9C); }
+    .category-card.naturaleza { background: linear-gradient(135deg, var(--earth-mid), #6F3A25); }
+    .category-card.numeros { background: linear-gradient(135deg, var(--ocre), #D49A4D); }
+    .category-card.colores { background: linear-gradient(135deg, var(--turquoise), #3A9C9C); }
+    
+    .category-icon { font-size: 32px; margin-bottom: 8px; }
+    .category-name { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    
+    .word-list { display: none; }
+    .word-list.active { display: flex; flex-direction: column; gap: 12px; }
+    
+    .word-item { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; border-left: 4px solid var(--ocre); }
+    .word-spanish { font-weight: 600; color: var(--cream); margin-bottom: 4px; }
+    .word-mapuche { font-family: 'Lora', serif; color: var(--text-muted); font-size: 14px; }
+    .word-pronunciation { font-size: 12px; color: var(--text-muted); font-style: italic; }
+    
+    .nav-bottom { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; background: white; border-top: 1px solid #ddd; padding: 12px 18px; display: flex; gap: 8px; flex-shrink: 0; }
+    .nav-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+    .nav-btn.active { background: var(--ocre); color: white; }
+    .nav-btn:not(.active) { background: #f0f0f0; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="app-frame">
+    <div class="header">
+      <div class="header-top">
+        <a href="/" class="back-btn">←</a>
+        <h1 class="header-title">Diccionario Mapuche</h1>
+      </div>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="Buscar palabras..." />
+      </div>
+    </div>
+    
+    <div class="content">
+      <div class="categories" id="categoriesContainer"></div>
+      <div id="wordListContainer"></div>
+    </div>
+    
+    <div class="nav-bottom">
+      <button class="nav-btn active" onclick="showCategories()">Categorías</button>
+      <button class="nav-btn" onclick="showFavorites()">Favoritos</button>
+      <button class="nav-btn" onclick="showSettings()">Ajustes</button>
+    </div>
+  </div>
+
+  <script>
+    const dictionary = {
+      version: "1.1",
+      ultima_actualizacion: "2026-08-22",
+      categorias: [
+        {
+          id: "saludos",
+          nombre: "Saludos y Cortesía",
+          color: "ocre",
+          icon: "👋",
+          palabras: [
+            {"es": "Hola", "mapu": "Mari mari", "pron": "ma-ri ma-ri"},
+            {"es": "Buenos días", "mapu": "Mari mari antü", "pron": "ma-ri ma-ri an-tü"},
+            {"es": "Buenas tardes", "mapu": "Mari mari rangiñ", "pron": "ma-ri ma-ri ran-giñ"},
+            {"es": "Buenas noches", "mapu": "Mari mari püllay", "pron": "ma-ri ma-ri pü-llay"},
+            {"es": "Adiós", "mapu": "Pewkayal", "pron": "pew-kay-yal"},
+            {"es": "Hasta luego", "mapu": "Fey mai", "pron": "fey mai"},
+            {"es": "Gracias", "mapu": "Chaltu may", "pron": "chal-tu may"},
+            {"es": "Muchas gracias", "mapu": "Chaltu may mapu", "pron": "chal-tu may ma-pu"},
+            {"es": "Por favor", "mapu": "Fia may", "pron": "fi-a may"},
+            {"es": "Sí", "mapu": "May", "pron": "may"},
+            {"es": "No", "mapu": "Nay", "pron": "nay"},
+            {"es": "Disculpa", "mapu": "Ayüpäy", "pron": "a-yü-pä-y"}
+          ]
+        },
+        {
+          id: "familia",
+          nombre: "Familia",
+          color: "terracota",
+          icon: "👨‍👩‍👧‍👦",
+          palabras: [
+            {"es": "Madre", "mapu": "Ñuke", "pron": "ñu-ke"},
+            {"es": "Padre", "mapu": "Chaw", "pron": "chaw"},
+            {"es": "Hijo", "mapu": "Pichi", "pron": "pi-chi"},
+            {"es": "Hija", "mapu": "Pichi domo", "pron": "pi-chi do-mo"},
+            {"es": "Abuela", "mapu": "Kuku", "pron": "ku-ku"},
+            {"es": "Abuelo", "mapu": "Kuku (masc)", "pron": "ku-ku"},
+            {"es": "Hermano", "mapu": "Ká", "pron": "ka"},
+            {"es": "Hermana", "mapu": "Lamngen", "pron": "lam-ngen"},
+            {"es": "Tío", "mapu": "Malon", "pron": "ma-lon"},
+            {"es": "Tía", "mapu": "Kuku pual", "pron": "ku-ku pu-al"},
+            {"es": "Primo", "mapu": "Tunten", "pron": "tun-ten"},
+            {"es": "Familia", "mapu": "Lof", "pron": "lof"}
+          ]
+        },
+        {
+          id: "escuela",
+          nombre: "La Escuela",
+          color: "turquoise",
+          icon: "📚",
+          palabras: [
+            {"es": "Escuela", "mapu": "Kimche", "pron": "kim-che"},
+            {"es": "Maestro", "mapu": "Kimchefe", "pron": "kim-che-fe"},
+            {"es": "Maestra", "mapu": "Kimchefe domo", "pron": "kim-che-fe do-mo"},
+            {"es": "Estudiante", "mapu": "Kimchewe", "pron": "kim-che-we"},
+            {"es": "Libro", "mapu": "Wülngiñ", "pron": "wül-ngiñ"},
+            {"es": "Cuaderno", "mapu": "Witral", "pron": "wi-tral"},
+            {"es": "Lápiz", "mapu": "Luwé", "pron": "lu-wé"},
+            {"es": "Pizarra", "mapu": "Kalül", "pron": "ka-lül"},
+            {"es": "Aprender", "mapu": "Kimen", "pron": "ki-men"},
+            {"es": "Escribir", "mapu": "Wiñan", "pron": "wi-ñan"},
+            {"es": "Leer", "mapu": "Winkun", "pron": "win-kun"},
+            {"es": "Pregunta", "mapu": "Kuse", "pron": "ku-se"}
+          ]
+        },
+        {
+          id: "naturaleza",
+          nombre: "Naturaleza",
+          color: "earth-mid",
+          icon: "🌿",
+          palabras: [
+            {"es": "Agua", "mapu": "Ko", "pron": "ko"},
+            {"es": "Tierra", "mapu": "Mapu", "pron": "ma-pu"},
+            {"es": "Sol", "mapu": "Antü", "pron": "an-tü"},
+            {"es": "Luna", "mapu": "Küyen", "pron": "kü-yen"},
+            {"es": "Estrella", "mapu": "Tren", "pron": "tren"},
+            {"es": "Fuego", "mapu": "Kütral", "pron": "kü-tral"},
+            {"es": "Viento", "mapu": "Püllay", "pron": "pü-llay"},
+            {"es": "Lluvia", "mapu": "Kurü", "pron": "ku-rü"},
+            {"es": "Árbol", "mapu": "Rawe", "pron": "ra-we"},
+            {"es": "Flor", "mapu": "Pewma", "pron": "pew-ma"},
+            {"es": "Nieve", "mapu": "Opüm", "pron": "o-püm"},
+            {"es": "Montaña", "mapu": "Wachu", "pron": "wa-chu"}
+          ]
+        },
+        {
+          id: "numeros",
+          nombre: "Números",
+          color: "ocre",
+          icon: "🔢",
+          palabras: [
+            {"es": "Uno", "mapu": "Kiñe", "pron": "ki-ñe"},
+            {"es": "Dos", "mapu": "Epu", "pron": "e-pu"},
+            {"es": "Tres", "mapu": "Küla", "pron": "kü-la"},
+            {"es": "Cuatro", "mapu": "Meli", "pron": "me-li"},
+            {"es": "Cinco", "mapu": "Kechu", "pron": "ke-chu"},
+            {"es": "Diez", "mapu": "Marla", "pron": "mar-la"}
+          ]
+        },
+        {
+          id: "colores",
+          nombre: "Colores",
+          color: "turquoise",
+          icon: "🎨",
+          palabras: [
+            {"es": "Rojo", "mapu": "Meli kutral", "pron": "me-li ku-tral"},
+            {"es": "Blanco", "mapu": "Kümeñ", "pron": "kü-meñ"},
+            {"es": "Negro", "mapu": "Kafu", "pron": "ka-fu"},
+            {"es": "Azul", "mapu": "Kütrülpü", "pron": "kü-trül-pü"},
+            {"es": "Verde", "mapu": "Pitra", "pron": "pit-ra"},
+            {"es": "Amarillo", "mapu": "Willi", "pron": "wil-li"}
+          ]
+        }
+      ]
+    };
+
+    function renderCategories() {
+      const container = document.getElementById('categoriesContainer');
+      container.innerHTML = '';
+      
+      dictionary.categorias.forEach(cat => {
+        const card = document.createElement('div');
+        card.className = `category-card ${cat.id}`;
+        card.innerHTML = `
+          <div class="category-icon">${cat.icon}</div>
+          <div class="category-name">${cat.nombre}</div>
+        `;
+        card.onclick = () => showWordList(cat);
+        container.appendChild(card);
+      });
+    }
+
+    function showWordList(category) {
+      const container = document.getElementById('categoriesContainer');
+      const listContainer = document.getElementById('wordListContainer');
+      
+      container.style.display = 'none';
+      
+      let html = `<h2 style="font-family: 'Cinzel', serif; color: #3B1F14; margin-bottom: 16px;">${category.nombre}</h2>`;
+      html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+      
+      category.palabras.forEach(word => {
+        html += `
+          <div class="word-item">
+            <div class="word-spanish">${word.es}</div>
+            <div class="word-mapuche">${word.mapu}</div>
+            <div class="word-pronunciation">📢 ${word.pron}</div>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+      listContainer.innerHTML = html;
+      
+      const backBtn = document.querySelector('.back-btn');
+      backBtn.onclick = (e) => {
+        e.preventDefault();
+        container.style.display = 'grid';
+        listContainer.innerHTML = '';
+      };
+    }
+
+    function showCategories() {
+      document.getElementById('categoriesContainer').style.display = 'grid';
+      document.getElementById('wordListContainer').innerHTML = '';
+    }
+
+    function showFavorites() {
+      alert('Sección de favoritos (próximamente)');
+    }
+
+    function showSettings() {
+      alert('Ajustes (próximamente)');
+    }
+
+    // Inicializar
+    renderCategories();
+  </script>
+</body>
+</html>
