@@ -34,7 +34,9 @@
       color: var(--text-muted); font-size: 13px; margin-bottom: 20px;
       cursor: pointer; background: none; border: none; padding: 0;
       font-family: 'Nunito', sans-serif;
+      transition: color 0.2s;
     }
+    .back-btn:hover { color: var(--ocre); }
     .page-badge {
       display: inline-block; background: rgba(196,136,59,0.18);
       color: var(--ocre); font-size: 10px; font-weight: 700;
@@ -62,7 +64,7 @@
       font-size: 13px; font-weight: 700; letter-spacing: 0.3px;
       color: #9A8070; cursor: pointer;
       border-bottom: 2px solid transparent;
-      transition: all 0.2s; user-select: none;
+      transition: all 0.2s; user-select: none; background: none; border: none;
     }
     .tab.active { color: var(--terracota); border-bottom-color: var(--terracota); }
 
@@ -163,7 +165,7 @@
     </defs>
     <rect width="100%" height="100%" fill="url(#gp)"/>
   </svg>
-  <button class="back-btn" onclick="history.back()">
+  <button class="back-btn" onclick="window.location.href='/CPEM-99/'">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     Inicio
   </button>
@@ -174,14 +176,13 @@
 
 <!-- TABS -->
 <div class="tabs">
-  <div class="tab active" onclick="showTab('timeline', this)">Línea de tiempo</div>
-  <div class="tab"        onclick="showTab('historia',  this)">Historia</div>
+  <button class="tab active" onclick="showTab('timeline', this)">Línea de tiempo</button>
+  <button class="tab" onclick="showTab('historia', this)">Historia</button>
 </div>
 
 <!-- PANEL 1: TIMELINE -->
 <div class="panel active" id="panel-timeline">
   <div class="timeline">
-
     <div class="tl-item">
       <div class="tl-dot"></div>
       <div class="tl-year">Antes de 2022</div>
@@ -190,7 +191,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A04530" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </div>
         <div class="tl-card-title">Sin secundaria propia</div>
-        <div class="tl-card-text">Los jóvenes de los parajes y comunidades mapuches debían viajar lejos: a Picún Leufú, o hasta los hogares de albergue de Junín de los Andes. Para muchos, irse significaba dejar de estudiar.</div>
+        <div class="tl-card-text">Los jóvenes de los parajes y comunidades mapuches debían viajar lejos: a Picún Leufú, o hasta los hogares de albergue de Junín de los Andes. Para muchos, irse significaba no poder completar sus estudios.</div>
       </div>
     </div>
 
@@ -202,7 +203,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C2E1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <div class="tl-card-title">Una memoria que une</div>
-        <div class="tl-card-text">El 3 de abril, Jorge Néstor Águila — un joven de 19 años nacido en Paso Aguerre — fue el primer soldado neuquino caído en Malvinas. Este pueblo sabe lo que cuesta defender lo propio.</div>
+        <div class="tl-card-text">El 3 de abril, Jorge Néstor Águila —un joven de 19 años nacido en Paso Aguerre— fue el primer soldado neuquino caído en Malvinas. Este pueblo sabe lo que cuesta la distancia y la ausencia.</div>
       </div>
     </div>
 
@@ -211,10 +212,10 @@
       <div class="tl-year">2022</div>
       <div class="tl-card">
         <div class="tl-icon" style="background:rgba(46,128,128,0.1)">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E8080" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E8080" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         </div>
         <div class="tl-card-title">La comunidad alzó su voz</div>
-        <div class="tl-card-text">Familias, vecinos y la comunidad educativa se organizaron y exigieron tener su propia escuela. En diciembre, el gobernador anunció que el CPEM de Paso Aguerre sería prioridad en el presupuesto 2023.</div>
+        <div class="tl-card-text">Familias, vecinos y la comunidad educativa se organizaron y exigieron tener su propia escuela. En diciembre, el gobernador anunció que el CPEM de Paso Aguerre sería creado.</div>
       </div>
     </div>
 
@@ -224,7 +225,7 @@
       <div class="tl-card highlight">
         <div class="tl-icon">
           <svg width="22" height="22" viewBox="0 0 56 56" fill="none">
-            <path d="M28 4 L30.5 20 L44 12 L36 24 L52 28 L36 32 L44 44 L30.5 36 L28 52 L25.5 36 L12 44 L20 32 L4 28 L20 24 L12 12 L25.5 20 Z" fill="none" stroke="#C4883B" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M28 4 L30.5 20 L44 12 L36 24 L52 28 L36 32 L44 44 L30.5 36 L28 52 L25.5 36 L12 44 L20 32 L4 28 L20 24 L12 12 L25.5 20 Z" fill="none" stroke="#C4883B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="28" cy="28" r="5" fill="#C4883B"/>
           </svg>
         </div>
@@ -241,33 +242,31 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C4883B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
         </div>
         <div class="tl-card-title">La escuela crece y espera su edificio</div>
-        <div class="tl-card-text">El CPEM 99 funciona en la Escuela Primaria N° 228 mientras avanza la construcción de su edificio propio — la obra más importante que tendrá Paso Aguerre.</div>
+        <div class="tl-card-text">El CPEM 99 funciona en la Escuela Primaria N° 228 mientras avanza la construcción de su edificio propio —la obra más importante que tendrá Paso Aguerre.</div>
       </div>
     </div>
-
   </div>
 </div>
 
 <!-- PANEL 2: HISTORIA -->
 <div class="panel" id="panel-historia">
-
   <div class="historia-gancho">
     Paso Aguerre es un pueblo pequeño, pero de memoria larga.
   </div>
 
-  <p class="historia-p">El 3 de abril de 1982, Jorge Néstor Águila — un joven de 19 años nacido en estas tierras — fue el primer soldado neuquino caído en las Islas Malvinas. Ese nombre quedó grabado para siempre en la identidad del lugar. Es un pueblo que sabe lo que cuesta defender lo propio.</p>
+  <p class="historia-p">El 3 de abril de 1982, Jorge Néstor Águila —un joven de 19 años nacido en estas tierras— fue el primer soldado neuquino caído en las Islas Malvinas. Ese nombre quedó grabado en la historia del pueblo, y con él, una lección: aquí sabemos lo que cuesta la distancia.</p>
 
   <div class="historia-sep"></div>
 
-  <p class="historia-p">Durante años, los jóvenes de los parajes y comunidades mapuches no tenían una secundaria cerca. Algunos viajaban hasta Picún Leufú. Otros debían ir mucho más lejos — hasta los hogares de albergue de Junín de los Andes, donde instituciones como el Instituto María Auxiliadora recibían a jóvenes del campo que no tenían otra opción.</p>
+  <p class="historia-p">Durante años, los jóvenes de los parajes y comunidades mapuches no tenían una secundaria cerca. Algunos viajaban hasta Picún Leufú. Otros debían ir mucho más lejos: a Junín de los Andes, donde funcionan hogares de albergue para estudiantes que vienen desde el campo.</p>
 
   <p class="historia-p">Estudiar significaba irse. Y irse, muchas veces, significaba no volver a estudiar.</p>
 
   <div class="historia-sep"></div>
 
-  <p class="historia-p">No fue el Estado quien resolvió esto solo. Fueron las propias comunidades, los vecinos y las familias quienes hicieron escuchar su voz. A través de espacios de participación y gestión colectiva, exigieron una escuela en su tierra — para que sus hijos aprendieran sin tener que abandonar su lugar.</p>
+  <p class="historia-p">No fue el Estado quien resolvió esto solo. Fueron las propias comunidades, los vecinos y las familias quienes hicieron escuchar su voz. A través de espacios de participación y demanda sostenida, la sociedad de Paso Aguerre se organizó.</p>
 
-  <p class="historia-p">Esa demanda sostenida, articulada con el gobierno local, abrió el camino. En diciembre de 2022 se anunció la decisión. Y en abril de 2023, el CPEM N° 99 fue creado oficialmente.</p>
+  <p class="historia-p">Esa demanda sostenida, articulada con el gobierno local, abrió el camino. En diciembre de 2022 se anunció la decisión. Y en abril de 2023, el CPEM N° 99 fue creado oficialmente. Hoy funciona en la Escuela Primaria N° 228 mientras avanza la construcción de su propio edificio.</p>
 
   <div class="historia-cierre">
     <div class="historia-cierre-quote">
@@ -275,7 +274,6 @@
     </div>
     <div class="historia-cierre-firma">La comunidad de Paso Aguerre</div>
   </div>
-
 </div>
 
 <script>
